@@ -11,3 +11,13 @@ export async function getBlogs(page){
     }
 }
 
+async function getBlog(slug){
+    try{
+        const response = await api.get(`blogs/${slug}/`)
+        return response.data;
+    }
+    catch(err){
+        throw new Error(err.message)
+    }
+
+}
