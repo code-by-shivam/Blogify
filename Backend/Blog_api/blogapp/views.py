@@ -80,4 +80,11 @@ def update_user_profile(request):
 def get_blog(request, slug):
     blog = Blog.objects.get(slug=slug)
     serializer = BlogSerializer(blog)
-    return Response(serializer.data)           
+    return Response(serializer.data)
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_username(request):
+    user = request.user
+    username = user.username
+    return Response({"username": username})        
