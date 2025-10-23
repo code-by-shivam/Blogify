@@ -1,18 +1,20 @@
 import Badge from "@/ui_components/Badge";
 import BlogWriter from "@/ui_components/BlogWriter";
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useNavigate, useParams } from "react-router-dom";
 import Spinner from "@/ui_components/Spinner";
 import { BASE_URL } from "@/api";
-import { getBlog } from "@/services/apiBlog";
+import { deleteBlog, getBlog } from "@/services/apiBlog";
 import { useEffect, useState } from "react";
 import { HiPencilAlt } from "react-icons/hi";
 import { MdDelete } from "react-icons/md";
 import Modal from "@/ui_components/Modal";
 import CreatePostPage from "./CreatePostPage";
+import { toast } from "react-toastify";
 
 const DetailPage = ({ username, isAuthenticated }) => {
   const { slug } = useParams();
+  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   function toggleModal() {
     setShowModal((curr) => !curr);
@@ -27,12 +29,39 @@ const DetailPage = ({ username, isAuthenticated }) => {
     queryKey: ["blog", slug],
     queryFn: () => getBlog(slug),
   });
+  const blogId = blog?.id
 
   useEffect(() => {
     if (blog) {
       console.log("Blog loaded:", blog);
     }
   }, [blog]);
+
+
+
+  const deleteMutation = useMutation({
+    mutationFn:(id) => deleteBlog(id),
+    onSuccess:() => {
+      toast.success("Your post has been deleted succesfully.")
+      navigate("/")
+    },
+    onError:(err) => {
+      console.log(err)
+      toast.error(err.message)
+    }
+    
+
+  })
+
+  function handleDeletePost(){
+    const popUp = window.confirm("Are you sure you eant to delete this post ?")
+    if(!popUp){
+      return;
+    }
+    deleteMutation.mutate(blogId)
+    
+  }
+  
 
   if (isPending) {
     return <Spinner />;
@@ -54,7 +83,7 @@ const DetailPage = ({ username, isAuthenticated }) => {
                 className="dark:text-white text-3xl cursor-pointer"
               />
 
-              <MdDelete className="dark:text-white text-3xl cursor-pointer" />
+              <MdDelete onClick={handleDeletePost} className="dark:text-white text-3xl cursor-pointer" />
             </span>
           )}
         </div>
