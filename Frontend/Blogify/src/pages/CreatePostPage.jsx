@@ -1,42 +1,101 @@
 import { Input } from "@/components/ui/input";
-import { Label } from "@radix-ui/react-label";
-import React from "react";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useForm } from "react-hook-form";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
+  SelectLabel,
 } from "@/components/ui/select";
-import { useForm } from "react-hook-form";
 import InputError from "@/ui_components/InputError";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createBlog, updateBlog } from "@/services/apiBlog";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import SmallSpinner from "@/ui_components/SmallSpinner";
+import SmallSpinnerText from "@/ui_components/SmallSpinnerText";
+import LoginPage from "./LoginPage";
 
-const CreatePostPage = () => {
-  const { register, handleSubmit, formState, setValue } = useForm();
+const CreatePostPage = ({ blog, isAuthenticated }) => {
+  const { register, handleSubmit, formState, setValue } = useForm({
+    defaultValues: blog ? blog : {},
+  });
   const { errors } = formState;
-  function onSubmit(data){
-    console.log(data)
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const blogID = blog?.id;
+
+  const updateMutation = useMutation({
+    mutationFn: ({ data, id }) => updateBlog(data, id),
+    onSuccess: () => {
+      navigate("/");
+      toast.success("Your post has been updated successfully!");
+      console.log("Your post has been updated successfully!");
+    },
+
+    onError: (err) => {
+      toast.error(err.message);
+      console.log("Error updating blog", err);
+    },
+  });
+
+  const mutation = useMutation({
+    mutationFn: (data) => createBlog(data),
+    onSuccess: () => {
+      toast.success("New post added successfully");
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+      navigate("/");
+    },
+  });
+
+  function onSubmit(data) {
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("content", data.content);
+    formData.append("Category", data.Category);
+
+    if (data.featured_image && data.featured_image[0]) {
+      if (data.featured_image[0] != "/") {
+        formData.append("featured_image", data.featured_image[0]);
+      }
+    }
+    if (blog && blogID) {
+      updateMutation.mutate({ data: formData, id: blogID });
+    } else {
+      mutation.mutate(formData);
+    }
   }
+
+  if (isAuthenticated === false) {
+    return <LoginPage />;
+  }
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="md:px-20 px-10 py-10 flex flex-col mx-auto my-12 items-center gap-8 w-fit rounded-2xl bg-gradient-to-br from-white to-gray-50 shadow-2xl dark:from-[#1a1d2e] dark:to-[#141624] border border-gray-100 dark:border-gray-800 dark:text-white">
-      <div className="flex flex-col gap-3 justify-center items-center mb-4">
-        <h3 className="font-bold text-3xl bg-gradient-to-r from-[#4B6BFB] to-[#7c3aed] bg-clip-text text-transparent">
-          Create Post
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className={`${
+        blog && "h-[90%] overflow-auto"
+      }  md:px-16 px-8 py-6 flex flex-col mx-auto my-9 items-center gap-6 w-fit rounded-lg bg-[#FFFFFF] shadow-xl dark:text-white dark:bg-[#141624]`}
+    >
+      <div className="flex flex-col gap-2 justify-center items-center mb-2">
+        <h3 className="font-semibold text-2xl max-sm:text-xl">
+          {blog ? "Update Post" : "Create Post"}
         </h3>
 
-        <p className="text-gray-600 dark:text-gray-400 text-sm">
-          Create a new post and share your ideas.
+        <p className="max-sm:text-[14px]">
+          {blog
+            ? "Do you want to update your post?"
+            : "Create a new post and share your ideas."}
         </p>
       </div>
 
       <div>
-        <Label
-          htmlFor="title"
-          className="text-gray-700 dark:text-gray-300 font-medium mb-2 block"
-        >
+        <Label htmlFor="title" className="dark:text-[97989F]">
           Title
         </Label>
         <Input
@@ -46,12 +105,13 @@ const CreatePostPage = () => {
             required: "Blog's title is required",
             minLength: {
               value: 3,
-              message: "The title must be atleast 3 Characters",
+              message: "The title must be at least 3 characters",
             },
           })}
           placeholder="Give your post a title"
-          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-[400px]"
+          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-[400px] max-sm:w-[300px] max-sm:text-[14px]"
         />
+
         {errors?.title?.message && <InputError error={errors.title.message} />}
       </div>
 
@@ -59,15 +119,15 @@ const CreatePostPage = () => {
         <Label htmlFor="content">Content</Label>
         <Textarea
           id="content"
+          placeholder="Write your blog post"
           {...register("content", {
-            required: "Blog's content is required.",
+            required: "Blog's content is required",
             minLength: {
               value: 10,
-              message: "Content must be atleast 10 Character.",
+              message: "The content must be at least 10 characters",
             },
           })}
-          placeholder="Write your blog post"
-          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[180px]  w-[400px] text-justify"
+          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[180px]  w-[400px] text-justify max-sm:w-[300px] max-sm:text-[14px]"
         />
         {errors?.content?.message && (
           <InputError error={errors.content.message} />
@@ -78,15 +138,14 @@ const CreatePostPage = () => {
         <Label htmlFor="Category">Category</Label>
 
         <Select
-          {...register("Category", {
-            required: "Blog's Category is required.",
-          })}
-          onValueChange={(Value) => setValue("Category", Value)}
+          {...register("Category", { required: "Blog's Category is required" })}
+          onValueChange={(value) => setValue("Category", value)}
+          defaultValue={blog ? blog.Category : ""}
         >
-          <SelectTrigger className="border-2 border-gray-300 dark:border-[#3B3C4A] focus:border-[#4B6BFB] dark:focus:border-[#4B6BFB] transition-colors duration-200 focus:outline-0 h-[44px] w-full rounded-lg bg-white dark:bg-[#1a1d2e]">
-            <SelectValue placeholder="Select a category" />
+          <SelectTrigger className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-full max-sm:w-[300px] max-sm:text-[14px]">
+            <SelectValue placeholder="Select a Category" />
           </SelectTrigger>
-          <SelectContent className="rounded-lg">
+          <SelectContent>
             <SelectGroup>
               <SelectLabel>Categories</SelectLabel>
               <SelectItem value="Technology">Technology</SelectItem>
@@ -97,31 +156,58 @@ const CreatePostPage = () => {
             </SelectGroup>
           </SelectContent>
         </Select>
-        {errors?.Category?.message && <InputError error={errors.Category.message}/>}
+
+        {errors?.Category?.message && (
+          <InputError error={errors.Category.message} />
+        )}
       </div>
 
       <div className="w-full">
-        <Label
-          htmlFor="featured_image"
-          className="text-gray-700 dark:text-gray-300 font-medium mb-2 block"
-        >
-          Featured Image
-        </Label>
+        <Label htmlFor="featured_image">Featured Image</Label>
         <Input
           type="file"
           id="picture"
           {...register("featured_image", {
-            required: "Blog's Featured image is required.",
+            required: blog ? false : "Blog's featured image is required",
           })}
-          className="border-2 border-gray-300 dark:border-[#3B3C4A] focus:border-[#4B6BFB] dark:focus:border-[#4B6BFB] transition-colors duration-200 focus:outline-0 h-[44px] w-full rounded-lg bg-white dark:bg-[#1a1d2e] file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#4B6BFB] file:text-white hover:file:bg-[#3d5ad4] file:cursor-pointer"
+          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-full max-sm:w-[300px] max-sm:text-[14px]"
         />
-        {errors?.featured_image?.message && <InputError error={errors.featured_image.message}/>}
+
+        {errors?.featured_image?.message && (
+          <InputError error={errors.featured_image.message} />
+        )}
       </div>
 
       <div className="w-full flex items-center justify-center flex-col my-4">
-        <button className="bg-gradient-to-r from-[#4B6BFB] to-[#7c3aed] hover:from-[#3d5ad4] hover:to-[#6d28d9] text-white w-full py-3.5 px-2 rounded-lg flex items-center justify-center gap-2 font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200">
-          Create post
-        </button>
+        {blog ? (
+          <button
+            disabled={updateMutation.isPending}
+            className="bg-[#4B6BFB] text-white w-full py-3 px-2 rounded-md flex items-center justify-center gap-2"
+          >
+            {updateMutation.isPending ? (
+              <>
+                {" "}
+                <SmallSpinner /> <SmallSpinnerText text="Updating post..." />{" "}
+              </>
+            ) : (
+              <SmallSpinnerText text="Update post" />
+            )}
+          </button>
+        ) : (
+          <button
+            disabled={mutation.isPending}
+            className="bg-[#4B6BFB] text-white w-full py-3 px-2 rounded-md flex items-center justify-center gap-2"
+          >
+            {mutation.isPending ? (
+              <>
+                {" "}
+                <SmallSpinner /> <SmallSpinnerText text="Creating post..." />{" "}
+              </>
+            ) : (
+              <SmallSpinnerText text="Create post" />
+            )}
+          </button>
+        )}
       </div>
     </form>
   );

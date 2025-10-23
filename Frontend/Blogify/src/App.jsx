@@ -40,11 +40,14 @@ function App() {
           setIsAuthenticated={setIsAuthenticated}
           />}>
             <Route index element={<HomePage />} />
-            <Route path="blogs/:slug" element={<DetailPage />} />
+            <Route path="blogs/:slug" element={<DetailPage
+             username={username}
+             isAuthenticated={isAuthenticated}
+              />} />
             <Route path="signup" element={<SignUpPage />} />
             <Route path="create" element={
               <ProtectedRoute>
-              <CreatePostPage />
+              <CreatePostPage isAuthenticated={isAuthenticated} />
               </ProtectedRoute> 
              } 
              />
