@@ -68,7 +68,7 @@ pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
 ```
-➡️ Server running at **http://127.0.0.1:8001**
+
 
 ### 🔹 3. Frontend Setup (React)
 ```bash
@@ -76,7 +76,7 @@ cd ../Frontend
 npm install
 npm run dev
 ```
-➡️ Frontend running at **http://localhost:5173**
+
 
 ---
 
