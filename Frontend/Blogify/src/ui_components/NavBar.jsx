@@ -28,9 +28,11 @@ export const NavBar = ({
           {/* <li>
            <NavLink to="/profile" className={({isActive})=> isActive ? "active" : " "}>Hi, Shivam</NavLink>
         </li> */}
-          {isAuthenticated ? (
+          {isAuthenticated && username ? (
             <>
-              <li>Hi, {username}</li>
+              <li>
+           <NavLink to="/profile" className={({isActive})=> isActive ? "active" : " "}>Hi, {username}</NavLink>
+        </li>
               <li onClick={logout} className="cursor-pointer">
                 Logout
               </li>

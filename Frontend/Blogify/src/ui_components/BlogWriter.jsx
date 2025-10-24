@@ -1,9 +1,11 @@
 import { BASE_URL } from "@/api"
 import pic from "../images/pic (2).jpg"
 import { FormatDate } from "@/services/formatData"
+import { Link } from "react-router-dom"
 
 const BlogWriter = ({blog}) => {
   return (
+    <Link to={`/profile/${blog.author.username}`}>
     <div className="flex items-center gap=4 ">
 
       
@@ -26,6 +28,7 @@ const BlogWriter = ({blog}) => {
 
 
     </div>
+    </Link>
   )
 }
 

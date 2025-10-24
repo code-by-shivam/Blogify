@@ -1,11 +1,13 @@
 from django.shortcuts import render
-from .serializers import UserRegistrationSerializer, BlogSerializer, UpdateUserprofileSerializer
+from .serializers import UserRegistrationSerializer, BlogSerializer, UpdateUserprofileSerializer, UserInfoSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from .models import Blog
 from rest_framework.pagination import PageNumberPagination
+from django.contrib.auth import get_user_model
+
 
 class BlogListPagination(PageNumberPagination):
     page_size = 3
@@ -88,3 +90,11 @@ def get_username(request):
     user = request.user
     username = user.username
     return Response({"username": username})        
+
+
+@api_view(['GET'])
+def get_userinfo(request, username):
+    User = get_user_model()
+    user = User.objects.get(username=username)
+    serializer = UserInfoSerializer(user)
+    return Response(serializer.data)

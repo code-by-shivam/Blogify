@@ -10,7 +10,6 @@ export async function getBlogs(page){
         throw new Error(err.message)
     }
 }
-
 export async function getBlog(slug){
     try{
         const response = await api.get(`blogs/${slug}/`)
@@ -34,7 +33,6 @@ export async function registerUser(data){
         throw new Error(err);
     }   
 }
-
 export async function signin(data){
     try{
         const response = await api.post("token/",data)
@@ -47,18 +45,14 @@ export async function signin(data){
         throw new Error(err)
     }
 }
-
-export async function getUsername(){
-    try{
-        const response = await api.get("get_username/")
-        return response.data
-    }
-    catch(err){
-        throw new Error(err.message)
-    }
-
+export async function getUsername() {
+  try {
+    const response = await api.get("get_username");
+    return response.data;
+  } catch (err) {
+    throw new Error(err.message);
+  }
 }
-
 export async function createBlog(data){
     try{
         const response = await api.post("create_blog/",data)
@@ -67,7 +61,6 @@ export async function createBlog(data){
         throw new Error(err.message)
     }
 }
-
 export async function updateBlog(data, id){
     try{
         const response = await api.put(`update_blog/${id}/`,data)
@@ -80,7 +73,6 @@ export async function updateBlog(data, id){
         throw new Error(err.message)
     }
 }
-
 export async function deleteBlog(id){
     try{
         const response = await api.post(`delete_blog/${id}/`)
@@ -92,4 +84,28 @@ export async function deleteBlog(id){
         }
         throw new Error(err.message)
     }
+}
+export async function getUserInfo(username){
+  try{
+    const response = await api.get(`get_userinfo/${username}`)
+    return response.data
+  }
+  catch(err){
+    throw new Error(err.message)
+  }
+}
+export async function updateProfile(data) {
+  try {
+    const response = await api.put(`update_user/`, data);
+    return response.data;
+  } catch (err) {
+    console.log(err)
+    if (err.response) {
+      throw new Error(
+        err?.response?.data.username[0] || "Failed to update profile"
+      );
+    }
+
+    throw new Error(err.message);
+  }
 }
