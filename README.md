@@ -1,28 +1,35 @@
 # 📰 Blogify — Full Stack Blog Application
 
-A modern **Full Stack Blogging Platform** built with **React (Vite)** on the frontend and **Django REST Framework (DRF)** on the backend.  
-It allows users to **register, login, create, edit, and delete blog posts**, manage profiles, and view other users’ blogs — all with **JWT authentication** and **React Query** for smooth API integration.
+> A modern and fully functional blogging platform for creators.
+
+### 🚀 Live Demo
+🔗 **[https://blogifyapp1.onrender.com/](https://blogifyapp1.onrender.com/)**
 
 ---
 
-## 🚀 Features
+## 🧭 Overview
+**Blogify** is a **Full Stack Blogging Platform** built using **React (Vite)** and **Django REST Framework (DRF)**. It allows users to **create, edit, and share blogs**, manage their profiles, and explore other users’ content with a clean, responsive UI. The app features **JWT authentication**, **React Query caching**, and a seamless frontend-backend integration.
+
+---
+
+## ✨ Key Features
 
 ### 👤 User Management
-- User Registration and Login with JWT authentication  
-- Update profile details and social links  
-- View other users’ public profiles  
+- Secure **JWT Authentication** (login/register)
+- Edit profile details and social links
+- View and interact with other user profiles
 
-### ✍️ Blog Features
-- Create, Read, Update, and Delete (CRUD) blog posts  
-- Slug-based URLs for SEO-friendly blog pages  
-- Pagination and detailed blog view  
-- Author-specific blog filtering  
+### ✍️ Blogging Features
+- Full **CRUD** (Create, Read, Update, Delete) functionality
+- SEO-friendly **slug-based URLs** for blog posts
+- **Pagination** for better navigation
+- Filter blogs by author
 
-### 🎨 UI/UX
-- Responsive design using **Tailwind CSS**  
-- Dark/Light Mode toggle  
-- Toast notifications for actions  
-- Dynamic Navbar and Protected Routes  
+### 🎨 UI/UX Experience
+- Fully responsive design with **Tailwind CSS**
+- **Dark/Light mode toggle**
+- **Toast notifications** for actions
+- Protected routes & dynamic navigation
 
 ---
 
@@ -33,23 +40,23 @@ It allows users to **register, login, create, edit, and delete blog posts**, man
 | **Frontend** | React (Vite) |
 | **State Management** | React Query |
 | **Routing** | React Router DOM |
-| **UI** | Tailwind CSS + ShadCN UI Components |
+| **UI Components** | Tailwind CSS + ShadCN UI |
 | **Backend** | Django REST Framework |
-| **Database** | SQLite (default Django DB) |
-| **Auth** | JWT (access + refresh tokens) |
+| **Database** | SQLite (Default Django DB) |
+| **Authentication** | JWT (Access + Refresh Tokens) |
 | **HTTP Client** | Axios |
 
 ---
 
-## ⚙️ Installation & Setup
+## ⚙️ Local Setup Guide
 
-### 1️⃣ Clone the Repository
+### 🔹 1. Clone Repository
 ```bash
 git clone https://github.com/your-username/blogify.git
 cd blogify
 ```
 
-### 2️⃣ Backend Setup (Django)
+### 🔹 2. Backend Setup (Django)
 ```bash
 cd Backend
 python -m venv env
@@ -61,17 +68,15 @@ pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
 ```
-Backend will start at 👉 **http://127.0.0.1:8001**
+➡️ Server running at **http://127.0.0.1:8001**
 
----
-
-### 3️⃣ Frontend Setup (React)
+### 🔹 3. Frontend Setup (React)
 ```bash
 cd ../Frontend
 npm install
 npm run dev
 ```
-Frontend will start at 👉 **http://localhost:5173**
+➡️ Frontend running at **http://localhost:5173**
 
 ---
 
@@ -80,25 +85,24 @@ Frontend will start at 👉 **http://localhost:5173**
 | Method | Endpoint | Description |
 |--------|-----------|-------------|
 | POST | `/register_user/` | Register a new user |
-| POST | `/create_blog/` | Create a new blog post |
-| GET | `/blog_list/` | List all blogs |
-| GET | `/blogs/<slug>/` | Get blog details |
-| PUT | `/update_blog/<id>/` | Update existing blog |
-| DELETE | `/delete_blog/<id>/` | Delete blog |
+| POST | `/create_blog/` | Create a blog post |
+| GET | `/blog_list/` | Get all blogs |
+| GET | `/blogs/<slug>/` | Get a single blog post |
+| PUT | `/update_blog/<id>/` | Update an existing blog |
+| DELETE | `/delete_blog/<id>/` | Delete a blog post |
 | PUT | `/update_user_profile/` | Update user profile |
 | GET | `/get_userinfo/<username>/` | Get user details |
 
 ---
 
-## 🔒 Authentication Flow
-- JWT tokens are stored in **localStorage**
-- Access token auto-attached to requests via **Axios Interceptor**
-- React Query handles caching, revalidation, and API calls
+## 🔒 Authentication Workflow
+- JWT tokens are stored securely in **localStorage**
+- **Axios Interceptors** attach the access token automatically
+- **React Query** manages data fetching, caching, and revalidation
 
 ---
 
 ## 🧠 Folder Structure
-
 ```
 02_Blog App/
 │
@@ -120,15 +124,17 @@ Frontend will start at 👉 **http://localhost:5173**
 
 ---
 
-## 🧑‍💻 Developer
-
+## 👨‍💻 Developer
 **👋 Shivam Chaurasiya**  
-🎓 B.Tech (Information Technology), CSJMU Kanpur  
-💻 Passionate about Full Stack Development, APIs, and Scalable Systems  
-🌐 [Portfolio Coming Soon]
+🎓 *B.Tech (Information Technology), CSJMU Kanpur*  
+💻 Passionate about Full Stack Development, REST APIs, and Scalable Web Systems.  
+🌐 **Live Project:** [https://blogifyapp1.onrender.com/](https://blogifyapp1.onrender.com/)
 
 ---
 
 ## ⭐ Support
+If you like **Blogify**, don’t forget to **⭐ star** the repository and share it with your developer community!
 
-If you like this project, don’t forget to **⭐ star** the repo and share it with fellow developers!
+---
+
+> _"Write. Share. Inspire." — Blogify_
