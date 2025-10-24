@@ -15,6 +15,7 @@ import ProtectedRoute from "./ui_components/ProtectedRoute";
 import { useEffect, useState } from "react";
 
 import { getUsername } from "./services/apiBlog";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
   const [username, setUsername] = useState(null);
@@ -76,6 +77,7 @@ function App() {
               />
             }
           />
+          <Route path="*"  element={<NotFoundPage/>}/>
           <Route path="profile/:username" element={<ProfilePage authUsername={username} />} />
         </Route>
       </Routes>
