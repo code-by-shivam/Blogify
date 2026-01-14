@@ -3,7 +3,7 @@
 > A modern and fully functional blogging platform for creators.
 
 ### 🚀 Live Demo
-🔗 **[https://blogifyapp1.onrender.com/](https://blogifyapp1.onrender.com/)**
+🔗 **[https://blogify-j1lb.onrender.com](https://blogify-j1lb.onrender.com)**
 
 ---
 
@@ -128,7 +128,7 @@ npm run dev
 **👋 Shivam Chaurasiya**  
 🎓 *B.Tech (Information Technology), CSJMU Kanpur*  
 💻 Passionate about Full Stack Development, REST APIs, and Scalable Web Systems.  
-🌐 **Live Project:** [https://blogifyapp1.onrender.com/](https://blogifyapp1.onrender.com/)
+🌐 **Live Project:** [https://blogify-j1lb.onrender.com](https://blogify-j1lb.onrender.com)
 
 ---
 
