@@ -3,11 +3,6 @@ import DetailPage from "./pages/DetailPage";
 import { HomePage } from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import AppLayout from "./ui_components/AppLayout";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-} from "@tanstack/react-query";
 import SignUpPage from "./pages/SignUpPage";
 import CreatePostPage from "./pages/CreatePostPage";
 import LoginPage from "./pages/LoginPage";
@@ -20,20 +15,20 @@ import NotFoundPage from "./pages/NotFoundPage";
 function App() {
   const [username, setUsername] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { data } = useQuery({
-    queryKey: ["username"],
-    queryFn: getUsername,
-  });
 
-  useEffect(
-    function () {
-      if (data) {
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const data = await getUsername();
         setUsername(data.username);
         setIsAuthenticated(true);
+      } catch (err) {
+        // Handle error or just leave unauthenticated
+        console.error("Failed to fetch user", err);
       }
-    },
-    [data]
-  );
+    }
+    fetchUser();
+  }, []);
 
   return (
     <BrowserRouter>
@@ -64,7 +59,11 @@ function App() {
             path="create"
             element={
               <ProtectedRoute>
-                <CreatePostPage isAuthenticated={isAuthenticated} />
+                <CreatePostPage
+                  isAuthenticated={isAuthenticated}
+                  setIsAuthenticated={setIsAuthenticated}
+                  setUsername={setUsername}
+                />
               </ProtectedRoute>
             }
           />
@@ -77,7 +76,7 @@ function App() {
               />
             }
           />
-          <Route path="*"  element={<NotFoundPage/>}/>
+          <Route path="*" element={<NotFoundPage />} />
           <Route path="profile/:username" element={<ProfilePage authUsername={username} />} />
         </Route>
       </Routes>

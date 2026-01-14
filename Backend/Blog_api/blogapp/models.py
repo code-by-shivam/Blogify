@@ -3,10 +3,11 @@ from django.contrib.auth.models import AbstractUser
 from django.conf import  settings
 from django.utils.text import slugify
 from django.utils import timezone
+from cloudinary.models import CloudinaryField
 # Create your models here.
 class CustomUser(AbstractUser):
     bio = models.TextField(blank=True, null=True)
-    profile_picture = models.ImageField(upload_to="profile_img", blank=True, null=True)
+    profile_picture = CloudinaryField('profile_img', blank=True, null=True)
     profile_picture_url = models.URLField(blank=True, null=True)
     job_title = models.CharField(max_length=50, blank=True, null=True)
 
@@ -36,7 +37,7 @@ class Blog(models.Model):
     published_date = models.DateTimeField(blank=True, null=True)
     is_draft = models.BooleanField(default=True)
     Category = models.CharField(max_length=255, choices=Category, blank=True, null=True)
-    featured_image = models.ImageField(upload_to="blog_img", blank=True, null=True)
+    featured_image = CloudinaryField('blog_img', blank=True, null=True)
     
     class Meta:
         ordering =["-published_date"]

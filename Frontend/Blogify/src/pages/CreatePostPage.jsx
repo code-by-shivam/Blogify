@@ -12,202 +12,238 @@ import {
   SelectLabel,
 } from "@/components/ui/select";
 import InputError from "@/ui_components/InputError";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 import { createBlog, updateBlog } from "@/services/apiBlog";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import SmallSpinner from "@/ui_components/SmallSpinner";
 import SmallSpinnerText from "@/ui_components/SmallSpinnerText";
+import { BASE_URL } from "@/api";
+import { MdCloudUpload } from "react-icons/md";
 import LoginPage from "./LoginPage";
 
-const CreatePostPage = ({ blog, isAuthenticated }) => {
-  const { register, handleSubmit, formState, setValue } = useForm({
+const CreatePostPage = ({ blog, isAuthenticated, setIsAuthenticated, setUsername, toggleModal }) => {
+  const isModal = Boolean(toggleModal); // If toggleModal is passed, we are in a modal
+  const { register, handleSubmit, formState, setValue, watch } = useForm({
     defaultValues: blog ? blog : {},
   });
   const { errors } = formState;
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const blogID = blog?.id;
+  const image = watch("featured_image");
+  const [imagePreview, setImagePreview] = useState(
+    blog?.featured_image
+      ? (blog.featured_image.toString().startsWith("http")
+        ? blog.featured_image
+        : `${BASE_URL}${blog.featured_image}`)
+      : null
+  );
 
-  const updateMutation = useMutation({
-    mutationFn: ({ data, id }) => updateBlog(data, id),
-    onSuccess: () => {
-      navigate("/");
-      toast.success("Your post has been updated successfully!");
-      console.log("Your post has been updated successfully!");
-    },
-
-    onError: (err) => {
-      toast.error(err.message);
-      console.log("Error updating blog", err);
-    },
-  });
-
-  const mutation = useMutation({
-    mutationFn: (data) => createBlog(data),
-    onSuccess: () => {
-      toast.success("New post added successfully");
-      queryClient.invalidateQueries({ queryKey: ["blogs"] });
-      navigate("/");
-    },
-  });
-
-  function onSubmit(data) {
-    const formData = new FormData();
-    formData.append("title", data.title);
-    formData.append("content", data.content);
-    formData.append("Category", data.Category);
-
-    if (data.featured_image && data.featured_image[0]) {
-      if (data.featured_image[0] != "/") {
-        formData.append("featured_image", data.featured_image[0]);
+  useEffect(() => {
+    if (image && image.length > 0) {
+      const file = image[0];
+      if (file instanceof File) {
+        const previewUrl = URL.createObjectURL(file);
+        setImagePreview(previewUrl);
+        return () => URL.revokeObjectURL(previewUrl);
       }
     }
-    if (blog && blogID) {
-      updateMutation.mutate({ data: formData, id: blogID });
-    } else {
-      mutation.mutate(formData);
+  }, [image]);
+
+  async function onSubmit(data) {
+    setIsSubmitting(true);
+    try {
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("content", data.content);
+      formData.append("Category", data.Category);
+
+      if (data.featured_image && data.featured_image.length > 0) {
+        if (data.featured_image[0] instanceof File) {
+          formData.append("featured_image", data.featured_image[0]);
+        }
+      }
+
+      if (blog && blogID) {
+        await updateBlog(formData, blogID);
+        // If in modal, close it and reload or fetch again. For now, navigate and toast.
+        // Actually, if in modal, we might want to stay on page? 
+        // Original behavior was navigate('/').
+        navigate("/");
+        toast.success("Your post has been updated successfully!");
+        console.log("Your post has been updated successfully!");
+        if (toggleModal) toggleModal(); // Close modal if present
+      } else {
+        await createBlog(formData);
+        toast.success("New post added successfully");
+        navigate("/");
+      }
+    } catch (err) {
+      toast.error(err.message);
+      console.log("Error submitting blog", err);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
   if (isAuthenticated === false) {
-    return <LoginPage />;
+    return <LoginPage setIsAuthenticated={setIsAuthenticated} setUsername={setUsername} />;
   }
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={`${
-        blog && "h-[90%] overflow-auto"
-      }  md:px-16 px-8 py-6 flex flex-col mx-auto my-9 items-center gap-6 w-fit rounded-lg bg-[#FFFFFF] shadow-xl dark:text-white dark:bg-[#141624]`}
+      className={`${isModal
+        ? "max-h-[90vh] overflow-y-auto w-full max-w-4xl p-8 rounded-xl scrollbar-hide"
+        : "my-10 w-full max-w-3xl p-8 rounded-xl shadow-2xl"
+        } flex flex-col mx-auto items-center gap-8 bg-white dark:shadow-none dark:bg-[#1E2030] dark:text-white transition-all duration-300 border border-gray-100 dark:border-gray-800`}
     >
-      <div className="flex flex-col gap-2 justify-center items-center mb-2">
-        <h3 className="font-semibold text-2xl max-sm:text-xl">
-          {blog ? "Update Post" : "Create Post"}
+      <div className="flex flex-col gap-2 justify-center items-center text-center w-full">
+        <h3 className="font-bold text-3xl tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          {blog ? "Update Post" : "Create New Post"}
         </h3>
-
-        <p className="max-sm:text-[14px]">
+        <p className="text-gray-500 dark:text-gray-400 text-sm md:text-base">
           {blog
-            ? "Do you want to update your post?"
-            : "Create a new post and share your ideas."}
+            ? "Refine your content and keep it fresh."
+            : "Share your thoughts and ideas with the world."}
         </p>
       </div>
 
-      <div>
-        <Label htmlFor="title" className="dark:text-[97989F]">
-          Title
-        </Label>
-        <Input
-          type="text"
-          id="title"
-          {...register("title", {
-            required: "Blog's title is required",
-            minLength: {
-              value: 3,
-              message: "The title must be at least 3 characters",
-            },
-          })}
-          placeholder="Give your post a title"
-          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-[400px] max-sm:w-[300px] max-sm:text-[14px]"
-        />
+      <div className="w-full space-y-6">
+        {/* Title Section */}
+        <div className="space-y-2">
+          <Label htmlFor="title" className="text-base font-medium dark:text-gray-200">
+            Title
+          </Label>
+          <Input
+            type="text"
+            id="title"
+            {...register("title", {
+              required: "Title is required",
+              minLength: {
+                value: 3,
+                message: "Title must be at least 3 characters",
+              },
+            })}
+            placeholder="Enter an engaging title..."
+            className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-[#141624] dark:focus:border-blue-500 transition-all font-medium"
+          />
+          {errors?.title?.message && <InputError error={errors.title.message} />}
+        </div>
 
-        {errors?.title?.message && <InputError error={errors.title.message} />}
+        {/* Category Section */}
+        <div className="space-y-2">
+          <Label htmlFor="Category" className="text-base font-medium dark:text-gray-200">Category</Label>
+          <Select
+            {...register("Category", { required: "Category is required" })}
+            onValueChange={(value) => setValue("Category", value)}
+            defaultValue={blog ? blog.Category : ""}
+          >
+            <SelectTrigger className="w-full px-4 py-3 h-auto rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-[#141624] dark:focus:border-blue-500 transition-all bg-transparent">
+              <SelectValue placeholder="Select a Category" />
+            </SelectTrigger>
+            <SelectContent className="dark:bg-[#1E2030] dark:border-gray-700">
+              <SelectGroup>
+                <SelectLabel className="dark:text-gray-400">Categories</SelectLabel>
+                {["Technology", "Economy", "Buisness", "Sports", "LifeStyle"].map((category) => (
+                  <SelectItem
+                    key={category}
+                    value={category}
+                    className="cursor-pointer focus:bg-blue-50 dark:focus:bg-[#141624] dark:text-gray-200"
+                  >
+                    {category}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          {errors?.Category?.message && (
+            <InputError error={errors.Category.message} />
+          )}
+        </div>
+
+        {/* Content Section */}
+        <div className="space-y-2">
+          <Label htmlFor="content" className="text-base font-medium dark:text-gray-200">Content</Label>
+          <Textarea
+            id="content"
+            placeholder="Write your masterpiece here..."
+            {...register("content", {
+              required: "Content is required",
+              minLength: {
+                value: 10,
+                message: "Content must be at least 10 characters",
+              },
+            })}
+            className="w-full min-h-[250px] px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-[#141624] dark:focus:border-blue-500 transition-all resize-y text-base leading-relaxed"
+          />
+          {errors?.content?.message && (
+            <InputError error={errors.content.message} />
+          )}
+        </div>
+
+        {/* Image Upload Section */}
+        <div className="space-y-2">
+          <Label htmlFor="featured_image" className="text-base font-medium dark:text-gray-200">Featured Image</Label>
+          <div className="relative group flex flex-col items-center justify-center w-full">
+            <Label
+              htmlFor="featured_image"
+              className="flex flex-col items-center justify-center w-full h-[300px] border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-[#141624] dark:bg-[#141624] hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 overflow-hidden relative transition-colors"
+            >
+              {imagePreview ? (
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                  <MdCloudUpload className="w-10 h-10 mb-3 text-gray-400" />
+                  <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                    <span className="font-semibold">Click to upload</span> or drag and drop
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    SVG, PNG, JPG or GIF (MAX. 800x400px)
+                  </p>
+                </div>
+              )}
+              <Input
+                type="file"
+                id="featured_image"
+                {...register("featured_image", {
+                  required: blog ? false : "Featured image is required",
+                })}
+                className="hidden"
+                accept="image/*"
+              />
+            </Label>
+          </div>
+          {errors?.featured_image?.message && (
+            <InputError error={errors.featured_image.message} />
+          )}
+        </div>
       </div>
 
-      <div>
-        <Label htmlFor="content">Content</Label>
-        <Textarea
-          id="content"
-          placeholder="Write your blog post"
-          {...register("content", {
-            required: "Blog's content is required",
-            minLength: {
-              value: 10,
-              message: "The content must be at least 10 characters",
-            },
-          })}
-          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[180px]  w-[400px] text-justify max-sm:w-[300px] max-sm:text-[14px]"
-        />
-        {errors?.content?.message && (
-          <InputError error={errors.content.message} />
-        )}
-      </div>
-
-      <div className="w-full">
-        <Label htmlFor="Category">Category</Label>
-
-        <Select
-          {...register("Category", { required: "Blog's Category is required" })}
-          onValueChange={(value) => setValue("Category", value)}
-          defaultValue={blog ? blog.Category : ""}
+      {/* Action Button */}
+      <div className="w-full pt-4">
+        <button
+          disabled={isSubmitting}
+          className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0"
         >
-          <SelectTrigger className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-full max-sm:w-[300px] max-sm:text-[14px]">
-            <SelectValue placeholder="Select a Category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Categories</SelectLabel>
-              <SelectItem value="Technology">Technology</SelectItem>
-              <SelectItem value="Economy">Economy</SelectItem>
-              <SelectItem value="Buisness">Buisness</SelectItem>
-              <SelectItem value="Sports">Sports</SelectItem>
-              <SelectItem value="LifeStyle">LifeStyle</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-
-        {errors?.Category?.message && (
-          <InputError error={errors.Category.message} />
-        )}
-      </div>
-
-      <div className="w-full">
-        <Label htmlFor="featured_image">Featured Image</Label>
-        <Input
-          type="file"
-          id="picture"
-          {...register("featured_image", {
-            required: blog ? false : "Blog's featured image is required",
-          })}
-          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-full max-sm:w-[300px] max-sm:text-[14px]"
-        />
-
-        {errors?.featured_image?.message && (
-          <InputError error={errors.featured_image.message} />
-        )}
-      </div>
-
-      <div className="w-full flex items-center justify-center flex-col my-4">
-        {blog ? (
-          <button
-            disabled={updateMutation.isPending}
-            className="bg-[#4B6BFB] text-white w-full py-3 px-2 rounded-md flex items-center justify-center gap-2"
-          >
-            {updateMutation.isPending ? (
-              <>
-                {" "}
-                <SmallSpinner /> <SmallSpinnerText text="Updating post..." />{" "}
-              </>
-            ) : (
-              <SmallSpinnerText text="Update post" />
-            )}
-          </button>
-        ) : (
-          <button
-            disabled={mutation.isPending}
-            className="bg-[#4B6BFB] text-white w-full py-3 px-2 rounded-md flex items-center justify-center gap-2"
-          >
-            {mutation.isPending ? (
-              <>
-                {" "}
-                <SmallSpinner /> <SmallSpinnerText text="Creating post..." />{" "}
-              </>
-            ) : (
-              <SmallSpinnerText text="Create post" />
-            )}
-          </button>
-        )}
+          {isSubmitting ? (
+            <div className="flex items-center justify-center gap-3">
+              <SmallSpinner />
+              <span className="text-lg">
+                {blog ? "Updating Post..." : "Publishing Post..."}
+              </span>
+            </div>
+          ) : (
+            <span className="text-lg">
+              {blog ? "Update Post" : "Publish Post"}
+            </span>
+          )}
+        </button>
       </div>
     </form>
   );
