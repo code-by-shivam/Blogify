@@ -4,7 +4,9 @@ import os
 
 from decouple import config
 import dj_database_url
+
 import cloudinary
+import cloudinary_storage
 import cloudinary.uploader
 import cloudinary.api
 
@@ -130,11 +132,6 @@ CLOUDINARY_STORAGE = {
 
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
-cloudinary.config(
-    cloud_name=config("CLOUDINARY_CLOUD_NAME"),
-    api_key=config("CLOUDINARY_API_KEY"),
-    api_secret=config("CLOUDINARY_API_SECRET"),
-)
 
 # --------------------------------------------------
 # DJANGO REST + JWT
