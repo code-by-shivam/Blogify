@@ -11,14 +11,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-# 🔥 CSRF-EXEMPT TOKEN VIEW
-@method_decorator(csrf_exempt, name="dispatch")
-class MyTokenObtainPairView(TokenObtainPairView):
-    pass
 
-@method_decorator(csrf_exempt, name="dispatch")
-class MyTokenRefreshView(TokenRefreshView):
-    pass
 
 
 urlpatterns = [
