@@ -92,12 +92,7 @@ SIMPLE_JWT = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "https://blogify-j1lb.onrender.com/",
     "https://blogify-j1lb.onrender.com",
-
-    # Add production URL later
 ]
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
@@ -112,3 +107,10 @@ cloudinary.config(
   api_key = config('CLOUDINARY_API_KEY'), 
   api_secret = config('CLOUDINARY_API_SECRET') 
 )
+ 
+
+STATICFILES_DIRS = []
+
+FRONTEND_BUILD = os.path.join(BASE_DIR, "..", "Frontend", "Blogify", "dist", "assets")
+if os.path.exists(FRONTEND_BUILD):
+    STATICFILES_DIRS.append(FRONTEND_BUILD)
