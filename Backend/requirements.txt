@@ -13,3 +13,6 @@ whitenoise==6.11.0
 # Used for environment variables management (fixes ImportError with 'decouple')
 python-decouple==3.8
 psycopg2-binary==2.9.10
+
+cloudinary==1.41.0
+django-cloudinary-storage==0.3.0
