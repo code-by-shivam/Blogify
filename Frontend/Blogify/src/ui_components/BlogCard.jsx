@@ -7,10 +7,10 @@ const BlogCard = ({ blog }) => {
     <div className="px-3 py-3 rounded-md w-[300px] h-auto flex flex-col gap-4 dark:border-gray-800 border shadow-lg">
 
       {/* Featured Image */}
-      {blog?.featured_image && (
+      {blog?.featured_image_url && (
         <div className="w-full h-[200px] border rounded-md overflow-hidden">
           <img
-            src={blog.featured_image}
+            src={blog.featured_image_url}
             alt={blog.title}
             className="w-full h-full object-cover rounded-lg"
           />

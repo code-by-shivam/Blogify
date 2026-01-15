@@ -94,10 +94,10 @@ const DetailPage = ({ username, isAuthenticated }) => {
         <BlogWriter blog={blog} />
 
         {/* -------- Featured Image (CLOUDINARY) -------- */}
-        {blog?.featured_image && (
+        {blog?.featured_image_url && (
           <div className="w-full h-[350px] my-9 overflow-hidden rounded-sm">
             <img
-              src={blog.featured_image}
+              src={blog.featured_image_url}
               alt={blog.title}
               className="w-full h-full object-cover rounded-sm"
             />

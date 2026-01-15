@@ -5,10 +5,7 @@ import os
 from decouple import config
 import dj_database_url
 
-import cloudinary
-import cloudinary_storage
-import cloudinary.uploader
-import cloudinary.api
+from corsheaders.defaults import default_headers
 
 # --------------------------------------------------
 # BASE
@@ -34,22 +31,19 @@ INSTALLED_APPS = [
     # third-party
     "rest_framework",
     "corsheaders",
-    "cloudinary",
-    "cloudinary_storage",
 
     # local
     "blogapp",
 ]
 
 # --------------------------------------------------
-# MIDDLEWARE (ORDER IS IMPORTANT)
+# MIDDLEWARE (ORDER IS CRITICAL)
 # --------------------------------------------------
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",   # ✅ MUST BE FIRST
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -63,30 +57,6 @@ ROOT_URLCONF = "Blog_api.urls"
 WSGI_APPLICATION = "Blog_api.wsgi.application"
 
 # --------------------------------------------------
-# TEMPLATES
-# --------------------------------------------------
-TEMPLATES = [
-    {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "context_processors": [
-                "django.template.context_processors.debug",
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
-            ],
-        },
-    },
-]
-
-# Optional: frontend build (safe check)
-FRONTEND_DIST = BASE_DIR / "../../Frontend/Blogify/dist"
-if FRONTEND_DIST.exists():
-    TEMPLATES[0]["DIRS"].append(FRONTEND_DIST)
-
-# --------------------------------------------------
 # DATABASE (RENDER POSTGRES)
 # --------------------------------------------------
 DATABASES = {
@@ -98,39 +68,15 @@ DATABASES = {
 }
 
 # --------------------------------------------------
-# AUTH / USER
+# AUTH
 # --------------------------------------------------
 AUTH_USER_MODEL = "blogapp.CustomUser"
 
 # --------------------------------------------------
-# STATIC FILES (WHITENOISE)
+# STATIC FILES
 # --------------------------------------------------
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
-STATICFILES_STORAGE = (
-    "whitenoise.storage.CompressedManifestStaticFilesStorage"
-)
-
-STATICFILES_DIRS = []
-
-FRONTEND_ASSETS = BASE_DIR / "../../Frontend/Blogify/dist/assets"
-if FRONTEND_ASSETS.exists():
-    STATICFILES_DIRS.append(FRONTEND_ASSETS)
-
-# --------------------------------------------------
-# MEDIA (CLOUDINARY)
-# --------------------------------------------------
-MEDIA_URL = "/media/"
-
-CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": config("CLOUDINARY_CLOUD_NAME"),
-    "API_KEY": config("CLOUDINARY_API_KEY"),
-    "API_SECRET": config("CLOUDINARY_API_SECRET"),
-}
-
-DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
-
 
 # --------------------------------------------------
 # DJANGO REST + JWT
@@ -139,8 +85,6 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 3,
 }
 
 SIMPLE_JWT = {
@@ -150,12 +94,32 @@ SIMPLE_JWT = {
 }
 
 # --------------------------------------------------
-# CORS (PRODUCTION SAFE)
+# 🔥 CORS + CSRF (FINAL FIX)
 # --------------------------------------------------
+
 CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
-    "https://blogify-j1lb.onrender.com",
+    "https://myblogifyapp.netlify.app",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://myblogifyapp.netlify.app",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "authorization",
+]
+
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "OPTIONS",
 ]
 
 # --------------------------------------------------

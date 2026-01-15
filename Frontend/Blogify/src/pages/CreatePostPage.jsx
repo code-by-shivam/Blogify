@@ -31,12 +31,12 @@ const CreatePostPage = ({ blog, isAuthenticated, setIsAuthenticated, setUsername
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const blogID = blog?.id;
-  const image = watch("featured_image");
+  const image = watch("featured_image_url");
   const [imagePreview, setImagePreview] = useState(
-    blog?.featured_image
-      ? (blog.featured_image.toString().startsWith("http")
-        ? blog.featured_image
-        : `${BASE_URL}${blog.featured_image}`)
+    blog?.featured_image_url
+      ? (blog.featured_image_url.toString().startsWith("http")
+        ? blog.featured_image_url
+        : `${BASE_URL}${blog.featured_image_url}`)
       : null
   );
 
@@ -59,9 +59,9 @@ const CreatePostPage = ({ blog, isAuthenticated, setIsAuthenticated, setUsername
       formData.append("content", data.content);
       formData.append("Category", data.Category);
 
-      if (data.featured_image && data.featured_image.length > 0) {
-        if (data.featured_image[0] instanceof File) {
-          formData.append("featured_image", data.featured_image[0]);
+      if (data.featured_image_url && data.featured_image_url.length > 0) {
+        if (data.featured_image_url[0] instanceof File) {
+          formData.append("featured_image_url", data.featured_image_url[0]);
         }
       }
 
@@ -185,10 +185,10 @@ const CreatePostPage = ({ blog, isAuthenticated, setIsAuthenticated, setUsername
 
         {/* Image Upload Section */}
         <div className="space-y-2">
-          <Label htmlFor="featured_image" className="text-base font-medium dark:text-gray-200">Featured Image</Label>
+          <Label htmlFor="featured_image_url" className="text-base font-medium dark:text-gray-200">Featured Image</Label>
           <div className="relative group flex flex-col items-center justify-center w-full">
             <Label
-              htmlFor="featured_image"
+              htmlFor="featured_image_url"
               className="flex flex-col items-center justify-center w-full h-[300px] border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-[#141624] dark:bg-[#141624] hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 overflow-hidden relative transition-colors"
             >
               {imagePreview ? (
@@ -210,8 +210,8 @@ const CreatePostPage = ({ blog, isAuthenticated, setIsAuthenticated, setUsername
               )}
               <Input
                 type="file"
-                id="featured_image"
-                {...register("featured_image", {
+                id="featured_image_url"
+                {...register("featured_image_url", {
                   required: blog ? false : "Featured image is required",
                 })}
                 className="hidden"
@@ -219,8 +219,8 @@ const CreatePostPage = ({ blog, isAuthenticated, setIsAuthenticated, setUsername
               />
             </Label>
           </div>
-          {errors?.featured_image?.message && (
-            <InputError error={errors.featured_image.message} />
+          {errors?.featured_image_url?.message && (
+            <InputError error={errors.featured_image_url.message} />
           )}
         </div>
       </div>
