@@ -85,7 +85,7 @@ def get_blog(request, slug):
     return Response(serializer.data)
 
 
-@csrf_exempt
+
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_username(request):
