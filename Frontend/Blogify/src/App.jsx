@@ -31,56 +31,56 @@ function App() {
   }, []);
 
   return (
-    <BrowserRouter>
-      <Routes>
+
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <AppLayout
+            isAuthenticated={isAuthenticated}
+            username={username}
+            setUsername={setUsername}
+            setIsAuthenticated={setIsAuthenticated}
+          />
+        }
+      >
+        <Route index element={<HomePage />} />
         <Route
-          path="/"
+          path="blogs/:slug"
           element={
-            <AppLayout
-              isAuthenticated={isAuthenticated}
+            <DetailPage
               username={username}
-              setUsername={setUsername}
-              setIsAuthenticated={setIsAuthenticated}
+              isAuthenticated={isAuthenticated}
             />
           }
-        >
-          <Route index element={<HomePage />} />
-          <Route
-            path="blogs/:slug"
-            element={
-              <DetailPage
-                username={username}
+        />
+        <Route path="signup" element={<SignUpPage />} />
+        <Route
+          path="create"
+          element={
+            <ProtectedRoute>
+              <CreatePostPage
                 isAuthenticated={isAuthenticated}
-              />
-            }
-          />
-          <Route path="signup" element={<SignUpPage />} />
-          <Route
-            path="create"
-            element={
-              <ProtectedRoute>
-                <CreatePostPage
-                  isAuthenticated={isAuthenticated}
-                  setIsAuthenticated={setIsAuthenticated}
-                  setUsername={setUsername}
-                />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="signin"
-            element={
-              <LoginPage
                 setIsAuthenticated={setIsAuthenticated}
                 setUsername={setUsername}
               />
-            }
-          />
-          <Route path="*" element={<NotFoundPage />} />
-          <Route path="profile/:username" element={<ProfilePage authUsername={username} />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="signin"
+          element={
+            <LoginPage
+              setIsAuthenticated={setIsAuthenticated}
+              setUsername={setUsername}
+            />
+          }
+        />
+        <Route path="*" element={<NotFoundPage />} />
+        <Route path="profile/:username" element={<ProfilePage authUsername={username} />} />
+      </Route>
+    </Routes>
+
   );
 }
 
