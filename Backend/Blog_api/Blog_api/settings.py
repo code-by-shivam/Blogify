@@ -3,6 +3,8 @@ from datetime import timedelta
 # Using python-decouple to manage environment variables from .env file
 from decouple import config
 import cloudinary
+import os
+import dj_database_url
 import cloudinary.uploader
 import cloudinary.api
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -56,20 +58,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Blog_api.wsgi.application'
 
+
+
 DATABASES = {
-    'default':{
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT'),
-    }
+    'default': dj_database_url.parse(
+        os.environ.get("DATABASE_URL")
+    )
 }
+
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [BASE_DIR / '../../Frontend/Blogify/dist/static']
+STATICFILES_DIRS = [BASE_DIR / '../../Frontend/Blogify/dist/assets']
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
@@ -94,6 +94,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "https://blogify-j1lb.onrender.com/",
+    "https://blogify-j1lb.onrender.com",
 
     # Add production URL later
 ]
