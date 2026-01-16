@@ -128,7 +128,7 @@ npm run dev
 **👋 Shivam Chaurasiya**  
 🎓 *B.Tech (Information Technology), CSJMU Kanpur*  
 💻 Passionate about Full Stack Development, REST APIs, and Scalable Web Systems.  
-🌐 **Live Project:** [https://blogify-j1lb.onrender.com](https://blogify-j1lb.onrender.com)
+🌐 **Live Project:** [https://myblogifyapp.netlify.app/](https://myblogifyapp.netlify.app/)
 
 ---
 

@@ -111,8 +111,8 @@ SIMPLE_JWT = {
 # 🔥 CORS + CSRF (FINAL FIX)
 # --------------------------------------------------
 CORS_ALLOWED_ORIGINS = [
-    "https://myblogifyapp.netlify.app",
-    "http://localhost:5173",
+    "myblogifyapp.netlify.app",
+    # "http://localhost:5173",
 ]
 
 # --------------------------------------------------
