@@ -1,60 +1,104 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.conf import  settings
+from django.conf import settings
 from django.utils.text import slugify
 from django.utils import timezone
 from cloudinary.models import CloudinaryField
-# Create your models here.
+
+
+# ==================================================
+# Custom User Model
+# ==================================================
 class CustomUser(AbstractUser):
     bio = models.TextField(blank=True, null=True)
-    profile_picture = CloudinaryField('profile_img', blank=True, null=True)
     job_title = models.CharField(max_length=50, blank=True, null=True)
+
+    profile_picture = CloudinaryField(
+        "profile_img",
+        blank=True,
+        null=True
+    )
 
     facebook = models.URLField(max_length=255, blank=True, null=True)
     youtube = models.URLField(max_length=255, blank=True, null=True)
     instagram = models.URLField(max_length=255, blank=True, null=True)
     twitter = models.URLField(max_length=255, blank=True, null=True)
     linkedin = models.URLField(max_length=255, blank=True, null=True)
+
     def __str__(self):
         return self.username
-    
-    
+
+
+# ==================================================
+# Blog Model
+# ==================================================
 class Blog(models.Model):
-    Category=(
-        ("Technology","Technology"),
-        ("Economy","Economy"),
-        ("Buisness","Buisness"),
-        ("Sports","Sports"),
-        ("LifeStyle","Lifestyle")
+
+    CATEGORY_CHOICES = (
+        ("Technology", "Technology"),
+        ("Economy", "Economy"),
+        ("Business", "Business"),
+        ("Sports", "Sports"),
+        ("Lifestyle", "Lifestyle"),
     )
+
     title = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255, unique=True, blank=True)
+
+    slug = models.SlugField(
+        max_length=255,
+        unique=True,
+        blank=True
+    )
+
     content = models.TextField()
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, related_name="blogs", null=True)
+
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name="blogs",
+        null=True,
+        blank=True
+    )
+
+    category = models.CharField(
+        max_length=255,
+        choices=CATEGORY_CHOICES,
+        blank=True,
+        null=True
+    )
+
+    featured_image = CloudinaryField(
+        "blog_img",
+        blank=True,
+        null=True
+    )
+
+    is_draft = models.BooleanField(default=True)
+
+    published_date = models.DateTimeField(blank=True, null=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    published_date = models.DateTimeField(blank=True, null=True)
-    is_draft = models.BooleanField(default=True)
-    Category = models.CharField(max_length=255, choices=Category, blank=True, null=True)
-    featured_image = CloudinaryField('blog_img', blank=True, null=True)
-    
+
     class Meta:
-        ordering =["-published_date"]
-        
-        
+        ordering = ["-published_date", "-created_at"]
+
     def __str__(self):
         return self.title
-    
+
     def save(self, *args, **kwargs):
-        base_slug =  slugify(self.title)
-        slug = base_slug
-        num = 1
-        while Blog.objects.filter(slug=slug).exists():
-            slug = f'{base_slug}-{num}'
-            num += 1
-        self.slug = slug 
-        
+        # Auto-generate unique slug
+        if not self.slug:
+            base_slug = slugify(self.title)
+            slug = base_slug
+            num = 1
+            while Blog.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f"{base_slug}-{num}"
+                num += 1
+            self.slug = slug
+
+        # Auto-set published date
         if not self.is_draft and self.published_date is None:
             self.published_date = timezone.now()
-            
+
         super().save(*args, **kwargs)
