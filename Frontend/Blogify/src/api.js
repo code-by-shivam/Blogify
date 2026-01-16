@@ -1,27 +1,38 @@
-import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
+import axios from "axios";
 
-export const BASE_URL = import.meta.env.VITE_BASE_URL
+export const BASE_URL = import.meta.env.VITE_BASE_URL;
 
+// PUBLIC API (No Auth Header)
+export const publicApi = axios.create({
+    baseURL: BASE_URL,
+});
+
+// PRIVATE API (With Auth Header)
 const api = axios.create({
     baseURL: BASE_URL,
-})
+});
 
+/**
+ * ================================
+ * REQUEST INTERCEPTOR
+ * - Automatically attach JWT token
+ * ================================
+ */
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem("access")
-        if(token){
-            const decoded = jwtDecode(token)
-            const expiry_date = decoded.exp
-            const current_time = Date.now() /1000
-            if(expiry_date > current_time){
-                config.headers.Authorization = `Bearer ${token}`
-            }
+        //  Safely read token (support both keys)
+        const token =
+            localStorage.getItem("access") ||
+            localStorage.getItem("access_token");
+
+        // Always attach token if present
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
         }
+
         return config;
     },
-    (error) => {
-        return Promise.reject(error)
-    }
-)
+    (error) => Promise.reject(error)
+);
+
 export default api;

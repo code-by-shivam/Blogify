@@ -55,7 +55,7 @@ const Hero = ({ userInfo, authUsername, toggleModal }) => {
           <FaFacebookF />
         </div>
         <div className="w-[40px] h-[40px] rounded-lg bg-[#696A75] flex justify-center items-center">
-          <BsTwitterX />
+          <BsTwitterX to="" />
         </div>
         <div className="w-[40px] h-[40px] rounded-lg bg-[#696A75] flex justify-center items-center">
           <FaYoutube />

@@ -1,9 +1,9 @@
-import api from "@/api";
+import api, { publicApi } from "@/api";
 
 
 export async function getBlogs(page) {
     try {
-        const response = await api.get(`blog_list/?page=${page}`)
+        const response = await publicApi.get(`blog_list/?page=${page}`)
         return response.data;
     }
     catch (err) {
@@ -12,7 +12,7 @@ export async function getBlogs(page) {
 }
 export async function getBlog(slug) {
     try {
-        const response = await api.get(`blogs/${slug}/`)
+        const response = await publicApi.get(`blogs/${slug}/`)
         return response.data;
     }
     catch (err) {
@@ -22,7 +22,7 @@ export async function getBlog(slug) {
 }
 export async function registerUser(data) {
     try {
-        const response = await api.post("register_user/", data);
+        const response = await publicApi.post("register_user/", data);
         return response.data;
     }
     catch (err) {
@@ -35,7 +35,7 @@ export async function registerUser(data) {
 }
 export async function signin(data) {
     try {
-        const response = await api.post("token/", data)
+        const response = await publicApi.post("token/", data)
         return response.data
     }
     catch (err) {
@@ -87,7 +87,7 @@ export async function deleteBlog(id) {
 }
 export async function getUserInfo(username) {
     try {
-        const response = await api.get(`get_userinfo/${username}`)
+        const response = await publicApi.get(`get_userinfo/${username}`)
         return response.data
     }
     catch (err) {
