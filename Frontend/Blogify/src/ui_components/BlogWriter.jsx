@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { FormatDate } from "@/services/formatData";
 
 const BlogWriter = ({ blog }) => {
-  const profileImage = blog?.author?.profile_picture_url;
+  const profileImage = blog?.author?.profile_picture;
 
   return (
     <Link to={`/profile/${blog?.author?.username}`}>

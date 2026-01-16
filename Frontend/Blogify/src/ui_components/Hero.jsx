@@ -11,9 +11,9 @@ const Hero = ({ userInfo, authUsername, toggleModal }) => {
     <div className="padding-x py-9 max-container flex flex-col items-center justify-center gap-4 bg-[#F6F6F7] dark:bg-[#242535] rounded-md">
       <div className="flex gap-4">
         <div className="w-[70px] h-[70px] rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-          {userInfo?.profile_picture_url ? (
+          {userInfo?.profile_picture ? (
             <img
-              src={userInfo.profile_picture_url}
+              src={userInfo.profile_picture}
               alt={userInfo.username}
               className="w-full h-full object-cover"
             />
