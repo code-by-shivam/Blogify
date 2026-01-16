@@ -3,7 +3,7 @@
 > A modern and fully functional blogging platform for creators.
 
 ### 🚀 Live Demo
-🔗 **[https://blogify-j1lb.onrender.com](https://blogify-j1lb.onrender.com)**
+🔗 **[https://myblogifyapp.netlify.app/](https://myblogifyapp.netlify.app/)**
 
 ---
 
