@@ -70,7 +70,7 @@ const CreatePostPage = ({
       : null
   );
 
-  /* ================= IMAGE PREVIEW ================= */
+  
   useEffect(() => {
     if (image && image.length > 0 && image[0] instanceof File) {
       const preview = URL.createObjectURL(image[0]);
@@ -79,7 +79,6 @@ const CreatePostPage = ({
     }
   }, [image]);
 
-  /* ================= SUBMIT ================= */
   async function onSubmit(data) {
     if (!data.category) {
       toast.error("Category is required");
@@ -115,7 +114,7 @@ const CreatePostPage = ({
     }
   }
 
-  /* ================= AUTH CHECK ================= */
+
   if (isAuthenticated === false) {
     return (
       <LoginPage
@@ -125,7 +124,6 @@ const CreatePostPage = ({
     );
   }
 
-  /* ================= UI ================= */
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}

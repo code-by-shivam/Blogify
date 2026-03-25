@@ -4,10 +4,6 @@ from datetime import timedelta
 from decouple import config
 
 
-
-# --------------------------------------------------
-# BASE
-# --------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config("SECRET_KEY")
@@ -15,9 +11,6 @@ DEBUG = config("DEBUG", default=False, cast=bool)
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(",")
 
-# --------------------------------------------------
-# INSTALLED APPS
-# --------------------------------------------------
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -27,20 +20,16 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     'rest_framework_simplejwt',
 
-    # third-party
     "rest_framework",
     "corsheaders",
     "cloudinary",
 
-    # local
+
     "blogapp",
 ]
 
-# --------------------------------------------------
-# MIDDLEWARE (ORDER IS CRITICAL)
-# --------------------------------------------------
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",   # ✅ MUST BE FIRST
+    "corsheaders.middleware.CorsMiddleware",   
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -50,9 +39,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-# --------------------------------------------------
-# URL / WSGI
-# --------------------------------------------------
+
 ROOT_URLCONF = "Blog_api.urls"
 TEMPLATES = [
     {
@@ -72,34 +59,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "Blog_api.wsgi.application"
 
+import dj_database_url
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.parse(config("DATABASE_URL"))
 }
-# --------------------------------------------------
-# AUTH
-# --------------------------------------------------
+
 AUTH_USER_MODEL = "blogapp.CustomUser"
 
-# --------------------------------------------------
-# STATIC FILES
-# --------------------------------------------------
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# --------------------------------------------------
-# DJANGO REST + JWT
-# --------------------------------------------------
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
-    # "DEFAULT_PERMISSION_CLASSES": (
-    #     "rest_framework.permissions.AllowAny",
-    # ),
 }
 
 SIMPLE_JWT = {
@@ -107,17 +81,11 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
 }
 
-# --------------------------------------------------
-# 🔥 CORS + CSRF (FINAL FIX)
-# --------------------------------------------------
-CORS_ALLOWED_ORIGINS = [
-    "https://myblogifyapp.netlify.app/",
-    # "http://localhost:5173",
-]
 
-# --------------------------------------------------
-# DEFAULTS
-# --------------------------------------------------
+CORS_ALLOWED_ORIGINS = [
+    config("VITE_FRONTEND_URL")
+    ]
+
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
