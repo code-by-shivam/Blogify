@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import { FaHamburger } from "react-icons/fa";
 import ResponsiveNavBar from "./ResponsiveNavBar";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 export const NavBar = ({
   darkMode,
   handleDarkMode,
@@ -11,12 +11,14 @@ export const NavBar = ({
   setUsername,
   setIsAuthenticated,
 }) => {
+  const navigate = useNavigate();
   const [showNavBar, setShowNavBar] = useState(false);
   function logout() {
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
     setIsAuthenticated(false);
     setUsername(null);
+    navigate("/"); // Redirect to home page after logout
   }
   return (
     <>
