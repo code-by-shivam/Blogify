@@ -26,7 +26,7 @@ const AppLayout = ({isAuthenticated, username, setUsername, setIsAuthenticated }
         setUsername={setUsername}
         setIsAuthenticated={setIsAuthenticated}
         />
-         <ToastContainer />
+        <ToastContainer />
         <Outlet />
         <Footer />
     </main>

@@ -2,7 +2,7 @@ import banner from "../images/workspace-banner.jpg"
 
 const Header = () => {
   return (
-    <section className="max-container padding-x py-4  relative">
+    <section className="w-full padding-x py-4  relative">
       <div className="w-full h-[450px] overflow-hidden rounded-lg">
         <img
           src={banner}

@@ -23,7 +23,7 @@ export const NavBar = ({
 }
   return (
     <>
-      <nav className="max-container padding-x py-6 flex justify-between items-center gap-6 sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+      <nav className="w-full padding-x py-6 flex justify-between items-center gap-6 sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
         <Link to="/" className="text-gray-900 text-2xl font-semibold dark:text-white hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-200">
           Blogify
         </Link>
