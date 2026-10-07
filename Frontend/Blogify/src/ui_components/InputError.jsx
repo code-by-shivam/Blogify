@@ -1,9 +1,3 @@
-import React from 'react'
+const InputError = ({ error }) => <p className="text-xs text-destructive">{error}</p>;
 
-const InputError = ({error}) => {
-  return (
-    <small className='text-red-700'>{error}</small>
-  )
-}
-
-export default InputError
+export default InputError;

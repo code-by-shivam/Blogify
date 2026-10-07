@@ -1,9 +1,8 @@
-const Badge = ({ blog }) => {
-  return (
-    <span className="px-2 py-[3px] text-[12px] font-semibold bg-[#4B6BFB] text-[#FFFFFF] rounded-sm self-start">
-      {blog?.category}
+const Badge = ({ blog }) =>
+  blog?.category ? (
+    <span className="inline-flex self-start rounded-full bg-accent px-2.5 py-1 text-xs font-medium text-accent-foreground">
+      {blog.category}
     </span>
-  );
-};
+  ) : null;
 
 export default Badge;

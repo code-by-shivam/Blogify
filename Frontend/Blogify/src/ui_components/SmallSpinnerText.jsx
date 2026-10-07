@@ -1,9 +1,3 @@
-import React from 'react'
+const SmallSpinnerText = ({ text }) => <span>{text}</span>;
 
-const SmallSpinnerText = ({text}) => {
-  return (
-   <small className="text-[16px]">{text}</small>
-  )
-}
-
-export default SmallSpinnerText
+export default SmallSpinnerText;

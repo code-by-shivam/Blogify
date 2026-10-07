@@ -1,78 +1,67 @@
-import { FaInstagram } from "react-icons/fa";
-import { FaFacebookF } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { FaInstagram, FaFacebookF, FaYoutube } from "react-icons/fa";
 import { BsTwitterX } from "react-icons/bs";
-import { FaYoutube } from "react-icons/fa";
-import { CiMail } from "react-icons/ci";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
+const SOCIALS = [
+  { Icon: FaInstagram, href: "https://www.instagram.com/", label: "Instagram" },
+  { Icon: FaFacebookF, href: "https://www.facebook.com/", label: "Facebook" },
+  { Icon: BsTwitterX, href: "https://twitter.com/", label: "X" },
+  { Icon: FaYoutube, href: "https://www.youtube.com/", label: "YouTube" },
+];
+const CATEGORIES = ["Technology", "Business", "Economy", "Lifestyle", "Sports"];
 
-const Footer = () => {
-  return (
-    <footer className="bg-[#F6F6F7] padding-x py-16 w-full dark:bg-[#141624]">
-      <div className="flex max-lg:gap-9 lg:gap-4 flex-wrap max-md:justify-center justify-between">
-        <div className="w-[300px] flex flex-col gap-6 max-md:items-center">
-          <h1 className="text-[#141624] text-2xl dark:text-[#FFFFFF] ">
-            Blogify
-          </h1 >
-
-          <p className="text-[14px] text-[#696A75] leading-[1.5]  max-md:text-center dark:text-[#97989F]">
-            Welcome to Blogify - your destination for insightful articles on technology, lifestyle, business, and more. Join our community of readers and writers sharing knowledge and experiences.
-          </p>
-        </div>
-
-        <div className="text-[#181A2A] text-[14px] flex flex-col gap-4 px-4 max-md:items-center">
-          <p className=" font-semibold text-[16px] dark:text-white">
-            Quick Links
-          </p>
-          <ul className="flex flex-col gap-4  text-[#3B3C4A] max-md:items-center dark:text-[#97989F]">
-            <li>Home</li>
-            <li>About</li>
-            <li>Blog</li>
-            <li>Archived</li>
-            <li>Author</li>
-            <li>Contact</li>
-          </ul>
-        </div>
-
-        <div className="text-[#181A2A] text-[14px] flex flex-col gap-4 px-4 max-md:items-center">
-          <p className=" font-semibold text-[16px] dark:text-white">Category</p>
-          <ul className="flex flex-col gap-4  text-[#3B3C4A] max-md:items-center dark:text-[#97989F]">
-            <li>Lifestyle</li>
-            <li>Technology</li>
-            <li>Travel</li>
-            <li>Business</li>
-            <li>Economy</li>
-            <li>Sports</li>
-          </ul>
-        </div>
-
-        <div className="bg-white w-[350px] px-6 flex flex-col items-center justify-center gap-2  rounded-lg dark:bg-[#242535] py-6">
-          <h3 className="font-semibold text-xl  dark:text-white">
-            Weekly Newsletter
-          </h3>
-          <p className="text-[#696A75] text-[16px] mb-5 dark:text-[#97989F]">
-            Get blog articles and offers via email
-          </p>
-          <div className="w-full relative dark:text-white">
-            <input
-              placeholder="Your Email"
-              className="border border-[#DCDDDF] rounded-sm h-[40px] px-3 py-3 w-full text-[14px] dark:bg-[#181A2A] "
-            />
-            <CiMail className="absolute top-[12px] right-[10px] text-[16px] dark:text-[#97989F]" />
-          </div>
-          <button className="bg-[#4B6BFB] text-[#FFFFFF] text-[16px] rounded-md w-full py-3">
-            Subscribe
-          </button>
-        </div>
+const Footer = () => (
+  <footer className="mt-24 border-t bg-muted/40">
+    <div className="page grid gap-12 py-14 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.4fr]">
+      <div className="space-y-3">
+        <p className="text-lg font-semibold tracking-tight">Blogify</p>
+        <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
+          Insightful articles on technology, business and life, written by a community of curious people.
+        </p>
       </div>
 
-      <div className="py-3 flex items-center gap-6 cursor-pointer max-md:mt-6 max-md:justify-center">
-        <FaInstagram onClick={() => window.open("https://www.instagram.com/", "_blank")} className="dark:text-white text-[20px] text-[#141624]" />
-        <FaFacebookF onClick={() => window.open("https://www.facebook.com/", "_blank")} className="dark:text-white text-[20px] text-[#141624]" />
-        <BsTwitterX onClick={() => window.open("https://twitter.com/", "_blank")} className="dark:text-white text-[20px] text-[#141624]" />
-        <FaYoutube onClick={() => window.open("https://www.youtube.com/", "_blank")} className="dark:text-white text-[20px] text-[#141624]" />
+      <div className="space-y-3">
+        <p className="text-sm font-semibold">Explore</p>
+        <ul className="space-y-2 text-sm text-muted-foreground">
+          <li><Link to="/" className="hover:text-foreground">Home</Link></li>
+          <li><Link to="/create" className="hover:text-foreground">Write a post</Link></li>
+          <li><Link to="/signin" className="hover:text-foreground">Login</Link></li>
+          <li><Link to="/signup" className="hover:text-foreground">Register</Link></li>
+        </ul>
       </div>
-    </footer>
-  )
-}
 
-export default Footer
+      <div className="space-y-3">
+        <p className="text-sm font-semibold">Topics</p>
+        <ul className="space-y-2 text-sm text-muted-foreground">
+          {CATEGORIES.map((c) => <li key={c}>{c}</li>)}
+        </ul>
+      </div>
+
+      <div className="space-y-3">
+        <p className="text-sm font-semibold">Weekly newsletter</p>
+        <p className="text-sm text-muted-foreground">Fresh articles in your inbox. No spam.</p>
+        <form onSubmit={(e) => e.preventDefault()} className="flex gap-2">
+          <Input type="email" placeholder="you@example.com" aria-label="Email" className="bg-background" />
+          <Button type="submit">Join</Button>
+        </form>
+      </div>
+    </div>
+
+    <div className="border-t">
+      <div className="page flex flex-col items-center justify-between gap-4 py-6 text-sm text-muted-foreground sm:flex-row">
+        <p>© {new Date().getFullYear()} Blogify. All rights reserved.</p>
+        <div className="flex items-center gap-4">
+          {SOCIALS.map(({ Icon, href, label }) => (
+            <a key={label} href={href} target="_blank" rel="noreferrer" aria-label={label} className="transition-colors hover:text-foreground">
+              <Icon className="size-4" />
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </footer>
+);
+
+export default Footer;

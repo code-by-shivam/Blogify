@@ -4,11 +4,11 @@ import Spinner from "@/ui_components/Spinner";
 import Modal from "@/ui_components/Modal";
 import CreatePostPage from "./CreatePostPage";
 
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import { HiPencilAlt } from "react-icons/hi";
-import { MdDelete } from "react-icons/md";
+import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 
 import { getBlog, deleteBlog } from "@/services/apiBlog";
@@ -64,60 +64,51 @@ const DetailPage = ({ username, isAuthenticated }) => {
   /* ---------------- Loading ---------------- */
   if (isLoading) return <Spinner />;
 
+  const readMins = Math.max(1, Math.round((blog?.content?.split(/\s+/).length || 0) / 200));
+  const isOwner = isAuthenticated && blog?.author?.username && username === blog.author.username;
+
   return (
     <>
-      <div className="padding-dx max-container py-9">
-        <Badge blog={blog} />
+      <article className="page-narrow py-8 sm:py-14">
+        <Link to="/" className="mb-8 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground">
+          <ArrowLeft className="size-4" /> All posts
+        </Link>
 
-        {/* -------- Title + Actions -------- */}
-        <div className="flex justify-between items-center">
-          <h2 className="py-6 text-2xl md:text-3xl font-semibold tracking-wide text-[#181A2A] dark:text-white">
-            {blog?.title}
-          </h2>
-
-          {isAuthenticated &&
-            blog?.author?.username &&
-            username === blog.author.username && (
-              <span className="flex items-center gap-3">
-                <HiPencilAlt
-                  onClick={toggleModal}
-                  className="text-3xl cursor-pointer dark:text-white"
-                />
-                <MdDelete
-                  onClick={handleDeletePost}
-                  className="text-3xl cursor-pointer dark:text-white"
-                />
-              </span>
-            )}
+        <div className="flex items-center gap-3">
+          <Badge blog={blog} />
+          <span className="text-xs text-muted-foreground">{readMins} min read</span>
         </div>
 
-        <BlogWriter blog={blog} />
+        <h1 className="mt-4 text-2xl font-semibold leading-tight tracking-tight break-words sm:text-3xl lg:text-4xl 2xl:text-5xl">
+          {blog?.title}
+        </h1>
 
-        {/* -------- Featured Image (CLOUDINARY) -------- */}
+        <div className="mt-6 flex flex-col gap-4 border-y py-4 sm:flex-row sm:items-center sm:justify-between">
+          <BlogWriter blog={blog} />
+          {isOwner && (
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={toggleModal}><Pencil /> Edit</Button>
+              <Button variant="outline" size="sm" onClick={handleDeletePost} disabled={isDeleting}
+                className="text-destructive hover:text-destructive">
+                <Trash2 /> Delete
+              </Button>
+            </div>
+          )}
+        </div>
+
         {blog?.featured_image && (
-          <div className="w-full h-[350px] my-9 overflow-hidden rounded-sm">
-            <img
-              src={blog.featured_image}
-              alt={blog.title}
-              className="w-full h-full object-cover rounded-sm"
-            />
-          </div>
+          <img src={blog.featured_image} alt={blog.title}
+            className="my-8 aspect-[16/9] w-full rounded-2xl border object-cover sm:my-10" />
         )}
 
-        {/* -------- Content -------- */}
-        <p className="text-[16px] leading-[2rem] text-justify text-[#3B3C4A] dark:text-[#BABABF]">
+        <div className="whitespace-pre-line break-words text-base leading-7 text-foreground/80 sm:text-[1.0625rem] sm:leading-8 2xl:text-lg">
           {blog?.content}
-        </p>
-      </div>
+        </div>
+      </article>
 
-      {/* -------- Edit Modal -------- */}
       {showModal && (
         <Modal toggleModal={toggleModal}>
-          <CreatePostPage
-            blog={blog}
-            toggleModal={toggleModal}
-            isAuthenticated={isAuthenticated}
-          />
+          <CreatePostPage blog={blog} toggleModal={toggleModal} isAuthenticated={isAuthenticated} />
         </Modal>
       )}
     </>

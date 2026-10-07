@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -127,154 +128,72 @@ const CreatePostPage = ({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="
-        my-14 w-full max-w-3xl mx-auto
-        p-10 rounded-2xl
-        bg-white dark:bg-[#1E2030]
-        border border-gray-100 dark:border-gray-800
-        shadow-xl dark:shadow-none
-        flex flex-col gap-8
-      "
+      className="surface mx-auto my-10 flex h-fit w-full max-w-3xl flex-col gap-7 p-6 sm:p-10"
     >
-      <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white">
-        {blog ? "Update Post" : "Create New Post"}
-      </h2>
+      <div className="space-y-1.5">
+        <h1 className="text-2xl font-semibold tracking-tight">
+          {blog ? "Update post" : "Create a new post"}
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          {blog ? "Make changes to your story." : "Share your ideas with the community."}
+        </p>
+      </div>
 
-      {/* ================= TITLE ================= */}
       <div className="space-y-2">
-        <Label className="text-gray-900 dark:text-white">Title</Label>
-        <Input
-          {...register("title", { required: "Title is required" })}
-          placeholder="Enter title"
-          className="
-            h-12 rounded-lg
-            border border-gray-300 dark:border-gray-700
-            bg-white dark:bg-[#141624]
-            text-gray-900 dark:text-white
-            focus:ring-2 focus:ring-blue-500
-          "
-        />
+        <Label htmlFor="title">Title</Label>
+        <Input id="title" placeholder="Give your post a title" className="h-11"
+          {...register("title", { required: "Title is required" })} />
         {errors.title && <InputError error={errors.title.message} />}
       </div>
 
-      {/* ================= CATEGORY ================= */}
       <div className="space-y-2">
-        <Label className="text-gray-900 dark:text-white">Category</Label>
-
-        <Select
-          value={category}
-          onValueChange={(value) =>
-            setValue("category", value, {
-              shouldValidate: true,
-              shouldDirty: true,
-            })
-          }
-        >
-          <SelectTrigger
-            className="
-              h-12 rounded-lg
-              border border-gray-300 dark:border-gray-700
-              bg-white dark:bg-[#141624]
-              text-gray-900 dark:text-white
-            "
-          >
-            <SelectValue placeholder="Select category" />
+        <Label>Category</Label>
+        <Select value={category} onValueChange={(value) => setValue("category", value, { shouldValidate: true, shouldDirty: true })}>
+          <SelectTrigger className="h-11 w-full">
+            <SelectValue placeholder="Select a category" />
           </SelectTrigger>
-
-          <SelectContent className="dark:bg-[#1E2030] dark:border-gray-700">
+          <SelectContent>
             {CATEGORIES.map((cat) => (
-              <SelectItem key={cat} value={cat} className="cursor-pointer">
-                {cat}
-              </SelectItem>
+              <SelectItem key={cat} value={cat} className="cursor-pointer">{cat}</SelectItem>
             ))}
           </SelectContent>
         </Select>
-
         {errors.category && <InputError error={errors.category.message} />}
       </div>
 
-      {/* ================= CONTENT ================= */}
       <div className="space-y-2">
-        <Label className="text-gray-900 dark:text-white">Content</Label>
-        <Textarea
-          rows={7}
+        <Label htmlFor="content">Content</Label>
+        <Textarea id="content" rows={10} placeholder="Write your story..." className="min-h-56 resize-y leading-relaxed"
           {...register("content", {
             required: "Content is required",
             minLength: { value: 10, message: "Minimum 10 characters" },
-          })}
-          className="
-            rounded-lg
-            border border-gray-300 dark:border-gray-700
-            bg-white dark:bg-[#141624]
-            text-gray-900 dark:text-white
-            focus:ring-2 focus:ring-blue-500
-            resize-none
-          "
-        />
+          })} />
         {errors.content && <InputError error={errors.content.message} />}
       </div>
 
-      {/* ================= IMAGE ================= */}
       <div className="space-y-2">
-        <Label className="text-gray-900 dark:text-white">Featured Image</Label>
-
-        <label
-          className="
-            relative flex flex-col items-center justify-center
-            h-[280px]
-            rounded-xl
-            border-2 border-dashed border-gray-300 dark:border-gray-700
-            bg-gray-50 dark:bg-[#141624]
-            hover:border-blue-500
-            cursor-pointer
-            transition
-            overflow-hidden
-          "
-        >
+        <Label>Featured image</Label>
+        <label className="relative flex h-64 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-dashed bg-muted/40 transition-colors hover:border-primary hover:bg-accent/40">
           {imagePreview ? (
-            <img
-              src={imagePreview}
-              alt="preview"
-              className="w-full h-full object-cover"
-            />
+            <img src={imagePreview} alt="preview" className="size-full object-cover" />
           ) : (
-            <div className="flex flex-col items-center text-gray-500 dark:text-gray-400">
-              <MdCloudUpload size={42} />
-              <p className="mt-2 text-sm">Click to upload image</p>
+            <div className="flex flex-col items-center gap-2 text-muted-foreground">
+              <MdCloudUpload size={36} />
+              <p className="text-sm">Click to upload an image</p>
             </div>
           )}
-
-          <Input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            {...register("featured_image")}
-          />
+          <Input type="file" accept="image/*" className="hidden" {...register("featured_image")} />
         </label>
       </div>
 
-      {/* ================= SUBMIT ================= */}
-      <button
-        disabled={isSubmitting}
-        className="
-          h-12 rounded-xl
-          bg-gradient-to-r from-blue-600 to-indigo-600
-          text-white font-semibold
-          hover:from-blue-700 hover:to-indigo-700
-          transition
-          disabled:opacity-70
-        "
-      >
-        {isSubmitting ? (
-          <div className="flex justify-center">
-            <SmallSpinner />
-          </div>
-        ) : blog ? (
-          "Update Post"
-        ) : (
-          "Publish Post"
+      <div className="flex justify-end gap-3 border-t pt-6">
+        {toggleModal && (
+          <Button type="button" variant="outline" size="lg" onClick={toggleModal}>Cancel</Button>
         )}
-      </button>
+        <Button type="submit" size="lg" disabled={isSubmitting} className="min-w-36">
+          {isSubmitting ? <SmallSpinner /> : blog ? "Update post" : "Publish post"}
+        </Button>
+      </div>
     </form>
   );
 };

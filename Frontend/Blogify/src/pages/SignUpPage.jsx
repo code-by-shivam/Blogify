@@ -2,14 +2,14 @@ import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { registerUser, updateProfile } from "@/services/apiBlog";
 import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom"; // Added useNavigate if needed for redirect, though logic handles it differently
+import { Link } from "react-router-dom";
 import SmallSpinner from "@/ui_components/SmallSpinner";
 import InputError from "@/ui_components/InputError";
-import SmallSpinnerText from "@/ui_components/SmallSpinnerText";
 
 /**
  * SignUpPage Component
@@ -63,17 +63,16 @@ const SignUpPage = ({ userInfo, updateForm, toggleModal }) => {
   };
 
   return (
-    <div className={`flex items-center justify-center ${!updateForm ? "min-h-[80vh] my-10" : ""}`}>
+    <div className={`flex items-center justify-center ${!updateForm ? "min-h-[75vh] px-4 py-8 sm:py-12" : "h-fit"}`}>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className={`flex flex-col gap-5 px-8 py-8 bg-white dark:bg-[#141624] rounded-lg shadow-xl w-full max-w-lg ${updateForm ? "h-[90vh] overflow-auto scrollbar-hide" : "my-5"
-          }`}
+        className={`surface flex w-full max-w-lg flex-col gap-5 p-6 sm:p-8 ${updateForm ? "max-h-[90vh] overflow-y-auto" : ""}`}
       >
-        <div className="text-center space-y-2 mb-2">
-          <h3 className="font-semibold text-2xl dark:text-white">
-            {updateForm ? "Update Profile" : "Sign Up"}
-          </h3>
-          <p className="text-gray-500 dark:text-gray-400">
+        <div className="mb-1 space-y-1.5 text-center">
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {updateForm ? "Update profile" : "Create your account"}
+          </h1>
+          <p className="text-sm text-muted-foreground">
             {updateForm
               ? "Tell us more about yourself."
               : "Create your account to get started!"}
@@ -82,7 +81,7 @@ const SignUpPage = ({ userInfo, updateForm, toggleModal }) => {
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="username" className="dark:text-gray-300">Username</Label>
+            <Label htmlFor="username">Username</Label>
             <Input
               id="username"
               type="text"
@@ -91,14 +90,13 @@ const SignUpPage = ({ userInfo, updateForm, toggleModal }) => {
                 required: "Username is required",
                 minLength: { value: 3, message: "Username must be at least 3 characters" },
               })}
-              className="dark:border-[#3B3C4A] dark:text-white"
             />
             {errors.username && <InputError error={errors.username.message} />}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="first_name" className="dark:text-gray-300">First Name</Label>
+              <Label htmlFor="first_name">First Name</Label>
               <Input
                 id="first_name"
                 type="text"
@@ -107,13 +105,12 @@ const SignUpPage = ({ userInfo, updateForm, toggleModal }) => {
                   required: "First name is required",
                   minLength: { value: 3, message: "Must be at least 3 characters" },
                 })}
-                className="dark:border-[#3B3C4A] dark:text-white"
               />
               {errors.first_name && <InputError error={errors.first_name.message} />}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="last_name" className="dark:text-gray-300">Last Name</Label>
+              <Label htmlFor="last_name">Last Name</Label>
               <Input
                 id="last_name"
                 type="text"
@@ -122,7 +119,6 @@ const SignUpPage = ({ userInfo, updateForm, toggleModal }) => {
                   required: "Last name is required",
                   minLength: { value: 3, message: "Must be at least 3 characters" },
                 })}
-                className="dark:border-[#3B3C4A] dark:text-white"
               />
               {errors.last_name && <InputError error={errors.last_name.message} />}
             </div>
@@ -131,7 +127,7 @@ const SignUpPage = ({ userInfo, updateForm, toggleModal }) => {
           {!updateForm && (
             <>
               <div className="space-y-2">
-                <Label htmlFor="password" className="dark:text-gray-300">Password</Label>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
                   type="password"
@@ -140,13 +136,12 @@ const SignUpPage = ({ userInfo, updateForm, toggleModal }) => {
                     required: "Password is required",
                     minLength: { value: 8, message: "Must be at least 8 characters" },
                   })}
-                  className="dark:border-[#3B3C4A] dark:text-white"
                 />
                 {errors.password && <InputError error={errors.password.message} />}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="dark:text-gray-300">Confirm Password</Label>
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
@@ -156,7 +151,6 @@ const SignUpPage = ({ userInfo, updateForm, toggleModal }) => {
                     minLength: { value: 8, message: "Must be at least 8 characters" },
                     validate: (value) => value === password || "Passwords do not match",
                   })}
-                  className="dark:border-[#3B3C4A] dark:text-white"
                 />
                 {errors.confirmPassword && <InputError error={errors.confirmPassword.message} />}
               </div>
@@ -166,7 +160,7 @@ const SignUpPage = ({ userInfo, updateForm, toggleModal }) => {
           {updateForm && (
             <>
               <div className="space-y-2">
-                <Label htmlFor="job_title" className="dark:text-gray-300">Job Title</Label>
+                <Label htmlFor="job_title">Job Title</Label>
                 <Input
                   id="job_title"
                   type="text"
@@ -175,13 +169,12 @@ const SignUpPage = ({ userInfo, updateForm, toggleModal }) => {
                     required: "Job title is required",
                     minLength: { value: 3, message: "Must be at least 3 characters" },
                   })}
-                  className="dark:border-[#3B3C4A] dark:text-white"
                 />
                 {errors.job_title && <InputError error={errors.job_title.message} />}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="bio" className="dark:text-gray-300">Bio</Label>
+                <Label htmlFor="bio">Bio</Label>
                 <Textarea
                   id="bio"
                   placeholder="Tell us more about you"
@@ -189,18 +182,18 @@ const SignUpPage = ({ userInfo, updateForm, toggleModal }) => {
                     required: "Bio is required",
                     minLength: { value: 10, message: "Must be at least 10 characters" },
                   })}
-                  className="dark:border-[#3B3C4A] dark:text-white min-h-[120px]"
+                  className="min-h-[120px]"
                 />
                 {errors.bio && <InputError error={errors.bio.message} />}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="picture" className="dark:text-gray-300">Profile Picture</Label>
+                <Label htmlFor="picture">Profile Picture</Label>
                 <Input
                   id="picture"
                   type="file"
                   {...register("profile_picture")}
-                  className="dark:border-[#3B3C4A] dark:text-white cursor-pointer file:cursor-pointer"
+                  className="cursor-pointer file:cursor-pointer"
                 />
               </div>
             </>
@@ -208,26 +201,16 @@ const SignUpPage = ({ userInfo, updateForm, toggleModal }) => {
         </div>
 
         <div className="w-full pt-2">
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-[#4B6BFB] hover:bg-[#3b5bdb] text-white py-3 px-4 rounded-md flex items-center justify-center gap-2 transition-colors disabled:opacity-70"
-          >
+          <Button type="submit" disabled={isLoading} className="h-10 w-full">
             {isLoading ? (
-              <>
-                <SmallSpinner />
-                <SmallSpinnerText text={updateForm ? "Updating..." : "Creating Account..."} />
-              </>
-            ) : (
-              <SmallSpinnerText text={updateForm ? "Update Profile" : "Sign Up"} />
-            )}
-          </button>
+              <><SmallSpinner /> {updateForm ? "Updating..." : "Creating account..."}</>
+            ) : updateForm ? "Update profile" : "Sign up"}
+          </Button>
 
           {!updateForm && (
-            <p className="text-sm text-center mt-4 dark:text-gray-400">
+            <p className="mt-4 text-center text-sm text-muted-foreground">
               Already have an account?{" "}
-              {/* Restored navigation link to Login Page */}
-              <Link to="/signin" className="text-[#4B6BFB] hover:underline">
+              <Link to="/signin" className="font-medium text-primary hover:underline">
                 Sign In
               </Link>
             </p>

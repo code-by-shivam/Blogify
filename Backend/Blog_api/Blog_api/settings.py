@@ -59,10 +59,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "Blog_api.wsgi.application"
 
-import dj_database_url
-
 DATABASES = {
-    'default': dj_database_url.parse(config("DATABASE_URL"))
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
 }
 
 AUTH_USER_MODEL = "blogapp.CustomUser"

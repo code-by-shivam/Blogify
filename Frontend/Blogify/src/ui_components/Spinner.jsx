@@ -1,22 +1,9 @@
-import React from 'react'
-import { ClipLoader } from "react-spinners";
-const override = {
-  display: "block",
-  margin: "0 auto",
-  borderColor: "purple",
-};
+import { Loader2 } from "lucide-react";
 
+const Spinner = () => (
+  <div className="flex min-h-[50vh] items-center justify-center text-primary">
+    <Loader2 className="size-8 animate-spin" aria-label="Loading" />
+  </div>
+);
 
-
-function Spinner() {
-  return (
-    <ClipLoader
-        cssOverride={override}
-        size={450}
-        aria-label="Loading Spinner"
-        data-testid="loader"
-      />
-  )
-}
-
-export default Spinner
+export default Spinner;

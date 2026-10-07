@@ -49,7 +49,7 @@ const ProfilePage = ({ authUsername }) => {
       {/* Blog List */}
       <BlogContainer
         blogs={userInfo?.author_posts || []}
-        title={`${username}'s posts`}
+        title={`Posts by ${username}`}
       />
 
       {/* Edit Profile Modal */}

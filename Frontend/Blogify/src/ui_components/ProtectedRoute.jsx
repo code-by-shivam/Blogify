@@ -1,8 +1,7 @@
 import { jwtDecode } from 'jwt-decode';
-import { decode } from 'punycode';
 import React, { useEffect, useState } from 'react'
-import { set } from 'react-hook-form';
 import Spinner from './Spinner';
+import api from '@/api';
 import { Navigate, useLocation } from 'react-router-dom';
 
 const ProtectedRoute = ({children}) => {

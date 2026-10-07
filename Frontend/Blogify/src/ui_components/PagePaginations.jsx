@@ -1,52 +1,39 @@
 import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
+  Pagination, PaginationContent, PaginationItem, PaginationLink,
+  PaginationNext, PaginationPrevious,
 } from "@/components/ui/pagination";
 
-const PagePaginations = ({
-  numOfPages,
-  handleSetPage,
-  page,
-  decreasePageValue,
-  increasePageValue,
-}) => {
+const PagePaginations = ({ numOfPages, handleSetPage, page, decreasePageValue, increasePageValue }) => {
+  if (!numOfPages || numOfPages < 2) return null;
   const numbers = Array.from({ length: numOfPages }, (_, i) => i + 1);
-  const firstNumber = numbers[0];
-  const lastNumbers = numbers[numbers.length - 1];
-  console.log(numbers);
-  return (
-    <Pagination className="my-6 dark:text-white">
-      <PaginationContent>
-        {page === firstNumber || (
-          <PaginationItem onClick={decreasePageValue}>
-            <PaginationPrevious href="#" />
-          </PaginationItem>
-        )}
+  const go = (fn) => (e) => {
+    e.preventDefault();
+    fn();
+    document.getElementById("posts")?.scrollIntoView({ behavior: "smooth" });
+  };
+  const disabled = "pointer-events-none opacity-40";
 
+  return (
+    <Pagination className="my-10">
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious href="#" onClick={go(decreasePageValue)} className={page === 1 ? disabled : ""} />
+        </PaginationItem>
         {numbers.map((num) => (
-          <PaginationItem key={num} onClick={() => handleSetPage(num)}>
-            {num === page ? (
-              <PaginationLink href="#" isActive>
-                {num}
-              </PaginationLink>
-            ) : (
-              <PaginationLink href="#" isActive>
-                {num}
-              </PaginationLink>
-            )}
+          <PaginationItem key={num}>
+            <PaginationLink
+              href="#"
+              isActive={num === page}
+              onClick={go(() => handleSetPage(num))}
+              className={num === page ? "border-primary bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground" : ""}
+            >
+              {num}
+            </PaginationLink>
           </PaginationItem>
         ))}
-
-        {page === lastNumbers || (
-          <PaginationItem onClick={increasePageValue}>
-            <PaginationNext href="#" />
-          </PaginationItem>
-        )}
+        <PaginationItem>
+          <PaginationNext href="#" onClick={go(increasePageValue)} className={page === numOfPages ? disabled : ""} />
+        </PaginationItem>
       </PaginationContent>
     </Pagination>
   );

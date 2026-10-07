@@ -1,8 +1,14 @@
-import React, { useState } from "react";
-import { Switch } from "@/components/ui/switch";
-import { FaHamburger } from "react-icons/fa";
-import ResponsiveNavBar from "./ResponsiveNavBar";
+import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Menu, Moon, PenLine, Sun, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import ResponsiveNavBar from "./ResponsiveNavBar";
+
+const linkCls = ({ isActive }) =>
+  `text-sm transition-colors ${
+    isActive ? "font-medium text-foreground" : "text-muted-foreground hover:text-foreground"
+  }`;
+
 export const NavBar = ({
   darkMode,
   handleDarkMode,
@@ -12,79 +18,66 @@ export const NavBar = ({
   setIsAuthenticated,
 }) => {
   const navigate = useNavigate();
-  const [showNavBar, setShowNavBar] = useState(false);
+  const [open, setOpen] = useState(false);
+
   function logout() {
-  localStorage.removeItem("access");
-  localStorage.removeItem("refresh");
-  setIsAuthenticated(false);
-  setUsername(null);
-  setShowNavBar(false);
-  navigate("/");
-}
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    setIsAuthenticated(false);
+    setUsername(null);
+    setOpen(false);
+    navigate("/");
+  }
+
   return (
-    <>
-      <nav className="w-full padding-x py-6 flex justify-between items-center gap-6 sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
-        <Link to="/" className="text-gray-900 text-2xl font-semibold dark:text-white hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-200">
+    <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-md">
+      <nav className="page flex h-14 items-center justify-between gap-4 sm:h-16 sm:gap-6">
+        <Link to="/" className="flex items-center gap-2 text-lg font-semibold tracking-tight">
+          <span className="grid size-7 place-items-center rounded-lg bg-primary text-primary-foreground">
+            <PenLine className="size-4" />
+          </span>
           Blogify
         </Link>
-        <ul className="flex items-center justify-end gap-9 text-gray-600 lg:flex-1 max-md:hidden dark:text-gray-300">
+
+        <div className="hidden items-center gap-6 md:flex">
           {isAuthenticated && username ? (
             <>
-              <li>
-                <NavLink
-                  to={`/profile/${username}`}
-                  className={({ isActive }) => (isActive ? "active text-gray-900 dark:text-white font-medium" : "hover:text-gray-900 dark:hover:text-white transition-colors duration-200")}
-                >
-                  Hi, {username}
-                </NavLink>
-              </li>
-              <li onClick={logout} className="cursor-pointer hover:text-gray-900 dark:hover:text-white transition-colors duration-200">
+              <NavLink to={`/profile/${username}`} className={linkCls}>@{username}</NavLink>
+              <button onClick={logout} className="text-sm text-muted-foreground transition-colors hover:text-foreground">
                 Logout
-              </li>
+              </button>
             </>
           ) : (
             <>
-              <li>
-                <NavLink
-                  to="/signin"
-                  className={({ isActive }) => (isActive ? "active text-gray-900 dark:text-white font-medium" : "hover:text-gray-900 dark:hover:text-white transition-colors duration-200")}
-                >
-                  Login
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/signup"
-                  className={({ isActive }) => (isActive ? "active text-gray-900 dark:text-white font-medium" : "hover:text-gray-900 dark:hover:text-white transition-colors duration-200")}
-                >
-                  Register
-                </NavLink>
-              </li>
+              <NavLink to="/signin" className={linkCls}>Login</NavLink>
+              <NavLink to="/signup" className={linkCls}>Register</NavLink>
             </>
           )}
+          <Button asChild size="sm">
+            <Link to="/create">Write a post</Link>
+          </Button>
+          <Button variant="ghost" size="icon-sm" onClick={handleDarkMode} aria-label="Toggle theme">
+            {darkMode ? <Sun /> : <Moon />}
+          </Button>
+        </div>
 
-          <li className="font-semibold">
-            <NavLink
-              to="/create"
-              className={({ isActive }) => (isActive ? "active text-gray-900 dark:text-white font-semibold" : "hover:text-gray-900 dark:hover:text-white transition-colors duration-200")}
-            >
-              Create Post
-            </NavLink>
-          </li>
-        </ul>
-        <Switch onCheckedChange={handleDarkMode} checked={darkMode} />
-        <FaHamburger
-          className="text-2xl cursor-pointer hidden max-md:block text-gray-700 dark:text-white hover:text-gray-900 dark:hover:text-gray-300 transition-colors duration-200"
-          onClick={() => setShowNavBar((curr) => !curr)}
-        />
+        <div className="flex items-center gap-1 md:hidden">
+          <Button variant="ghost" size="icon-sm" onClick={handleDarkMode} aria-label="Toggle theme">
+            {darkMode ? <Sun /> : <Moon />}
+          </Button>
+          <Button variant="ghost" size="icon-sm" onClick={() => setOpen((o) => !o)} aria-label="Menu">
+            {open ? <X /> : <Menu />}
+          </Button>
+        </div>
       </nav>
-      {showNavBar && (
+      {open && (
         <ResponsiveNavBar
           isAuthenticated={isAuthenticated}
           username={username}
           logout={logout}
+          close={() => setOpen(false)}
         />
       )}
-    </>
+    </header>
   );
 };

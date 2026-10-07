@@ -1,49 +1,31 @@
-import React from "react";
 import { NavLink } from "react-router-dom";
 
-const ResponsiveNavBar = ({username, logout, isAuthenticated }) => {
-  return (
-    <nav className="max-container padding-x py-6 max-md:block hidden dark:text-[#FFFFFF]">
-      <ul className="flex items-center justify-center gap-6 text-[#3B3C4A] lg:flex-1 flex-col dark:text-[#FFFFFF]">
-        {isAuthenticated && username ? (
-          <>
-            <li>Hi, {username}</li>
-            <li onClick={logout} className="cursor-pointer">
-              Logout
-            </li>
-          </>
-        ) : (
-          <>
-            <li>
-              <NavLink
-                to="/signin"
-                className={({ isActive }) => (isActive ? "active" : " ")}
-              >
-                Login
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/signup"
-                className={({ isActive }) => (isActive ? "active" : " ")}
-              >
-                Register
-              </NavLink>
-            </li>
-          </>
-        )}
+const item = ({ isActive }) =>
+  `block rounded-lg px-3 py-2.5 text-sm ${
+    isActive ? "bg-accent font-medium text-accent-foreground" : "text-muted-foreground hover:bg-muted"
+  }`;
 
-        <li className="font-semibold">
-          <NavLink
-            to="/create"
-            className={({ isActive }) => (isActive ? "active" : " ")}
-          >
-            Create Post
-          </NavLink>
-        </li>
-      </ul>
-    </nav>
-  );
-};
+const ResponsiveNavBar = ({ username, logout, isAuthenticated, close }) => (
+  <div className="border-t bg-background md:hidden">
+    <ul className="page flex flex-col gap-1 py-3">
+      {isAuthenticated && username ? (
+        <>
+          <li><NavLink to={`/profile/${username}`} onClick={close} className={item}>@{username}</NavLink></li>
+          <li>
+            <button onClick={logout} className="w-full rounded-lg px-3 py-2.5 text-left text-sm text-muted-foreground hover:bg-muted">
+              Logout
+            </button>
+          </li>
+        </>
+      ) : (
+        <>
+          <li><NavLink to="/signin" onClick={close} className={item}>Login</NavLink></li>
+          <li><NavLink to="/signup" onClick={close} className={item}>Register</NavLink></li>
+        </>
+      )}
+      <li><NavLink to="/create" onClick={close} className={item}>Write a post</NavLink></li>
+    </ul>
+  </div>
+);
 
 export default ResponsiveNavBar;
